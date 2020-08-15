@@ -1,0 +1,122 @@
+figure, figcaption,figdate {
+	display: block;
+}
+
+.commentaire {
+        font: 10pt normal Arial, sans-serif;
+        color: #a1a1a1;
+        display:block;
+	min-height: 10px;
+}
+
+
+#polaroid{
+	overflow:hidden;
+	width:100%;
+	padding:20px 10px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#polaroid .photofigure{
+        margin-left: auto;
+        margin-right: auto;
+	position:relative;
+	float: left;	
+	width:200px;
+	margin:10px 20px;
+	padding: 6px 8px 10px 8px;
+	height: 280px;
+	-webkit-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+	-moz-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+	box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+	background: #eee6d8;
+	background: -webkit-linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+	background: -moz-linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+	background: -o-linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+	background: -ms-linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+	background: linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+	/*-webkit-transform:rotate(-1deg);
+	-moz-transform: rotate(-1deg);
+	-o-transform: rotate(-1deg);
+	-ms-transform: rotate(-1deg);
+	transform: rotate(-1deg);*/
+	-webkit-backface-visibility:hidden; /*prevent rotated text being jagged in Chrome and Safari*/
+}
+#polaroid .photofigure:nth-child(even) {
+/*
+	-webkit-transform:rotate(2deg);
+	-moz-transform: rotate(2deg);
+	-o-transform: rotate(2deg);
+	-ms-transform: rotate(2deg);
+	transform: rotate(2deg);*/
+	-webkit-backface-visibility:hidden; /*prevent rotated text being jagged in Chrome and Safari*/
+	-webkit-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+	-moz-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+	box-shadow: -4px 4px 8px -4px rgba(0, 0, 0, .75);
+}
+#polaroid .photofigure:before {
+	content: '';
+	display: inline-block;
+	position: absolute;
+	left:5px;
+	top: -15px;
+	width: 75px;
+	height: 25px;
+	background-color: rgba(222,220,198,0.7);
+/*	-webkit-transform: rotate(-12deg);
+	-moz-transform: rotate(-12deg);
+	-o-transform: rotate(-12deg);
+	-ms-transform: rotate(-12deg);*/
+}
+#polaroid .photofigure:nth-child(even):before {
+	left:150px;
+	top: -15px;
+	width: 55px;
+	height: 25px;
+/*	-webkit-transform: rotate(12deg);
+	-moz-transform: rotate(12deg);
+	-o-transform: rotate(12deg);
+	-ms-transform: rotate(12deg);*/
+}
+#polaroid .photocomment{
+	text-align:center;
+	font-family: 'Reenie Beanie', cursive; /*Reenie Beanie is available through Google Webfonts http://code.google.com/webfonts/specimen/Reenie+Beanie*/
+	font-size:0.8em;
+	color:#454f40;
+	letter-spacing:0.09em;
+	min-height: 4em;
+	display: inline-block;
+}
+
+#polaroid .photodate {
+	text-align:center;
+        font-family: 'Reenie Beanie', cursive; /*Reenie Beanie is available through Google Webfonts http://code.google.com/webfonts/specimen/Reenie+Beanie*/
+        font-size:1em;
+        color:#454f40;
+        letter-spacing:0.09em;
+}
+/**IE Hacks - see http://css3pie.com/ for more info on how to use CS3Pie and to download the latest version**/
+#polaroid figure{
+	-pie-background: linear-gradient(#ede1c9, #fef8e2 20%, #f2ebde 60%);
+	behavior: url(css/pie/PIE.htc);
+	position:relative; /*required to make PIE work*/
+	padding-top:10px\9;
+	padding-right:10px\9;
+}
+
+#polaroid .image {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 220px;
+}
+
+#polaroid .photofigure:hover {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 5;
+}

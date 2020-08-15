@@ -1,0 +1,82 @@
+
+
+ /**************************
+*
+*	GENERAL
+*
+**************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**************************
+*
+*	COLORS & SKINS
+*
+**************************/
+/**************************
+
+.camera_pag  {
+	display: block;
+	position: absolute;
+	left: 50%;
+	margin-left: -23px;
+	bottom: 151px;
+	height: 12px;
+	overflow: hidden;
+	float: left;	
+	z-index: 999;
+	text-align: left;
+	bottom: 58px;
+
+}
+
+.camera_pag_ul {
+ 	overflow: hidden;
+
+
+}
+
+.camera_pag ul li {
+	float: left;
+}
+
+.camera_pag ul li+li {
+	margin-left: 5px;
+}
+
+.camera_pag ul li span {
+	display: block;
+	width: 12px;
+	background: url(../images/pagination.png) right 0 no-repeat;
+	height: 12px;
+	overflow: hidden;
+	color: transparent;
+	text-indent: -100px;
+}
+
+.camera_pag ul li:hover span, .camera_pag ul li.cameracurrent span {
+	background-position: 0 0;
+	cursor: pointer;
+}
+
+**************************/
+

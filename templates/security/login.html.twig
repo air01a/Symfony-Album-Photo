@@ -1,0 +1,34 @@
+{# /app/templates/security/login.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+{% block stylesheets %}
+     <meta charset="utf-8">
+     <link rel="icon" href="images/favicon.ico">
+     <link rel="shortcut icon" href="images/favicon.ico" />
+     <link rel="stylesheet" href="css/login.css">
+{% endblock %}
+
+{% block body %}
+<div id="login">    
+    <div id="triangle"></div>
+      <h1>Connexion</h1>
+<form method="post" id="auth">
+    {# If there's any error, display it to the user #}
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    {# Email Input #}
+    <input type="username" value="{{ last_username }}" name="username" id="inputUsername"  placeholder="Username" required autofocus>
+    
+    {# Password Input #}
+    <input type="password" name="password" id="inputPassword" placeholder="Password" required>
+    
+    {# CSRF Token Input #}
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+
+    <input type="submit" value="connexion" />
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'main.html.twig' %}
+{% block body %}
+
+<script>
+  idgal={{ idAlbum }};
+  hashgal=false;
+  token = "{{ token }}";
+</script>
+{% verbatim %}
+<script src="js/app.js"></script>
+<script src="video/swfobject.js"></script>
+<link rel="stylesheet" href="css/jquery-ui.min.css">
+<script src="js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="css/ddvideogallery.css" />
+<script src="js/ddvideogallery.js"></script>
+<div id="photocontrol">
+</div>
+<div ng-controller="GalleryCtrl" id="mainCtrl">
+
+	<div ng-hide="showphoto">
+		<h3>
+			 <span class="col1">Nos Photos</span>
+		</h3>
+		<div class="searchbox">
+			Recherche : 
+			<input type="search" ng-model="search" ng-change="updatesearch(search)" placeholder="3 lettres min">
+		</div>
+		<div id="polaroid">
+			<p style="text-align:center">
+				<button class="pagelink" ng-click="previousPage()" ng-show="startGal!=0"><</button>
+				<button class="pagelink" ng-repeat="pge in link" ng-click="actShowPage(pge.indice)">
+					<span style="color: red;" ng-show="pge.selected==1"> {{ pge.indice }}</span>
+					<span ng-show="pge.selected!=1">{{ pge.indice  }}</span>
+				</button>
+				<button class="pagelink" ng-click="nextPage()" ng-show="(startGal+1)*galLimit<numAlbums">></button>
+			</p>
+	  		 <div style="text-align: center;margin-left:auto;margin-right:auto;" ng-repeat="album in albums">
+				<a href ng-click="actShowPhoto(album.id)">
+					<div class="photofigure">
+						<div class="photodate">{{ album.date }}</div>
+						<div class="image" style="display: block;background-image:url(/api/v1/albums/{{ album.id }}/photos/random)"  alt="#gal.caption#" /></div>
+					<div class="photocomment">{{ album.name }}</div>
+					</div>
+				</a>
+          		</div>
+		</div><!--end polaroid-->
+			<p style="text-align:center">
+				<button class="pagelink" ng-click="previousPage()" ng-show="startGal!=0"><</button>
+				<button class="pagelink" ng-repeat="pge in link" ng-click="actShowPage(pge.indice)">
+					<span style="color: red;" ng-show="pge.selected==1"> {{ pge.indice }}</span>
+					<span ng-show="pge.selected!=1">{{ pge.indice  }}</span>
+				</button>
+				<button class="pagelink" ng-click="nextPage()" ng-show="(startGal+1)*galLimit<numAlbums">></button>
+			</p>
+
+	</div>
+<script>
+
+$(document).ready(function() {
+
+ 	 if (window.history && window.history.pushState) {
+
+		    window.history.pushState('forward', null, '#forward');
+
+		    $(window).on('popstate', function() {
+			var scope = angular.element($("#mainCtrl")).scope();  
+			if (scope.showphoto) {
+			scope.$apply(function(){
+				scope.returnToGal();
+    			});
+			$('#backimg').effect( "shake");
+			window.history.pushState('forward', null, '#forward');
+		     }
+    		    });
+	}
+});
+
+</script>
+	<div ng-show="showphoto" style="text-align:center;margin-left: auto; margin-right: auto">
+		
+		<h3 class="pb1"><span class="col1"> {{ album.name }} </span></h3>
+		<a href ng-click="returnToGal()"><img id="backimg" class="img_inner fleft" src="images/g1.png" width="40px"></a>
+		<a href="/api/v1/albums/{{album.id}}/"><img class="img_inner fleft" src="images/zip.png" height="40px" id="zipimg"></a>
+		<a href ng-click="diaporama()"><img class="img_innet fleft" src="images/play_file.png"  height="40px" id="diap">
+		<a href ng-click="showVideo()"><img class="img_inner fleft" src="images/video_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a>
+		<a href ng-click="goToVideo()"><img class="img_inner fleft" src="images/video_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a>
+		<div class="extra_wrapper" style="text-align: left">
+		<p>
+			<b>{{ album.date }} </b><br /> {{ album.commentaire }}
+                </p></div>
+		<center>
+		<div style="height: 8px;"></div>
+		<div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper">
+			<div class="photos">
+				<a class="fullsizable" id="pht{{ $index }}" href="/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?thumb=0" alt="{{ photo.commentaire }}">
+					<div class="minimg" style="display: block;background-image:url(/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download)"></div>
+				</a>
+			</div>
+			<div class="commentaire" > {{ photo.commentaire }}</div>
+		</div>
+
+
+<p id="videobox">
+<div id="videojukebox" class="ddvideoGallery" style="width: 70%">
+	<div class="videoWrapper"></div>
+	<div class="videoNav"></div>
+</div>
+</p>
+
+{% endverbatim %}
+
+		</center>
+
+
+
+</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,157 @@
+{literal}
+<script src="js/app.js"></script>
+<script src="video/swfobject.js"></script>
+<link rel="stylesheet" href="css/jquery-ui.min.css">
+<script src="js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="css/ddvideogallery.css" />
+<script src="js/ddvideogallery.js"></script>
+<div id="photocontrol">
+</div>
+<div ng-controller="GalleryCtrl" id="mainCtrl">
+
+{/literal}
+{if (!isset($notlogged)) }
+{literal}
+
+	<div ng-hide="showphoto">
+		<h3>
+			 <span class="col1">Nos Photos</span>
+		</h3>
+		<div class="searchbox">
+			Recherche : 
+			<input type="search" ng-model="search" ng-change="updatesearch(search)" placeholder="3 lettres min">
+		</div>
+		<div id="polaroid">
+			<p style="text-align:center">
+				<button class="pagelink" ng-click="previousPage()" ng-show="startGal!=0"><</button>
+				<button class="pagelink" ng-repeat="pge in link" ng-click="actShowPage(pge.indice)" >
+					<span style="color: red;" ng-show="pge.selected==1"> {{pge.indice}}</span>
+					<span ng-show="pge.selected!=1">{{pge.indice}}</span>
+				</button>
+				<button class="pagelink" ng-click="nextPage()" ng-show="(startGal+1)*galLimit<numGal">></button>
+			</p>
+	  		 <div style="text-align: center;margin-left:auto;margin-right:auto;" ng-repeat="gal in galleries">
+				<a href ng-click="actShowPhoto(gal.id)">
+					<div class="photofigure">
+						<div class="photodate">{{gal.date}}</div>
+						<div class="image" style="display: block;background-image:url(download.php?id_photo={{gal.photo}})"  alt="{{gal.caption}}" /></div>
+					<div class="photocomment">{{gal.name}}</div>
+					</div>
+				</a>
+          		</div>
+		</div><!--end polaroid-->
+                        <p style="text-align:center">
+                                <button class="pagelink" ng-click="previousPage()" ng-show="startGal!=0"><</button>
+                                <button class="pagelink" ng-repeat="pge in link" ng-click="actShowPage(pge.indice)" >
+                                        <span style="color: red;" ng-show="pge.selected==1"> {{pge.indice}}</span>
+                                        <span ng-show="pge.selected!=1">{{pge.indice}}</span>
+                                </button>
+                                <button class="pagelink" ng-click="nextPage()" ng-show="(startGal+1)*galLimit<numGal">></button>
+                        </p>
+
+	</div>
+{/literal}
+<script>
+{if isset($idgal)}
+  idgal={$idgal}
+{else}
+  idgal=false;
+{/if}
+  hashgal=false;
+
+$(document).ready(function() {
+
+ 	 if (window.history && window.history.pushState) {
+
+		    window.history.pushState('forward', null, '#forward');
+
+		    $(window).on('popstate', function() {
+			var scope = angular.element($("#mainCtrl")).scope();  
+			if (scope.showphoto) {
+			scope.$apply(function(){
+				scope.returnToGal();
+    			});
+			$('#backimg').effect( "shake");
+			window.history.pushState('forward', null, '#forward');
+		     }
+    		    });
+	}
+});
+</script>
+
+{else}
+<script>
+  idgal={$idgal};
+  hashgal='{$hashgal}';
+</script>
+{/if}
+{literal}
+	<div ng-show="showphoto" style="text-align:center;margin-left: auto; margin-right: auto">
+		
+		<h3 class="pb1"><span class="col1">{{gallery.gallery.name}}</span></h3>
+		{/literal}{if !isset($notlogged) }<a href ng-click="returnToGal()"><img id="backimg" class="img_inner fleft" src="images/g1.png" width="40px"></a>{/if}{literal}
+		<a href="download.php?id_zip={{gallery.gallery.id}}&alphanum_hash={{hash}}&id_gal={{gallery.gallery.id}}"><img class="img_inner fleft" src="images/zip.png" height="40px" id="zipimg"></a>
+		<a href ng-click="diaporama()"><img class="img_innet fleft" src="images/play_file.png"  height="40px" id="diap">
+		<a href ng-click="showVideo()"><img class="img_inner fleft" src="images/video_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a>
+		<a href ng-click="goToVideo()"><img class="img_inner fleft" src="images/video_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a>
+		<div class="extra_wrapper" style="text-align: left">
+		<p>
+			<b>{{gallery.gallery.date}}</b><br />{{gallery.gallery.commentaire}}
+                </p></div>
+		<center>
+		<div style="height: 8px;"></div>
+		<div ng-repeat="photo in gallery.photos" on-Finish-Render-Filters class="photos_wrapper">
+			<div class="photos">
+				<a class="fullsizable" id="pht{{$index}}" href="download.php?id_size=1&id_photo={{photo.id}}&id_gal={{gallery.gallery.id}}&alphanum_hash={{hash}}" alt="{{photo.commentaire}}">
+					<div class="minimg" style="display: block;background-image:url(download.php?id_photo={{photo.id}}&id_gal={{gallery.gallery.id}}&alphanum_hash={{hash}})"></div>
+				</a>
+			</div>
+			<div class="commentaire" >{{photo.commentaire}}</div>
+		</div>
+
+
+<p id="videobox">
+<div id="videojukebox" class="ddvideoGallery" style="width: 70%">
+	<div class="videoWrapper"></div>
+	<div class="videoNav"></div>
+</div>
+</p>
+
+
+
+		</center>
+<script>
+// initialize video gallery after markup above
+
+var so = new SWFObject('/video/player.swf','mpl','800','450','9');
+                          so.addParam('allowfullscreen','true');
+                          so.addParam('allowscriptaccess','always');
+                          so.addParam('wmode','opaque');
+
+$(function() {
+    $( "#dialog" ).dialog({
+	
+      height: 550,
+      width: 850,
+      modal: false,
+	zIndex: 1000,
+      autoOpen: false,
+      show: {
+        effect: "blind",
+        duration: 1000
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
+    });
+
+  });
+
+</script>
+<div id="dialog" title="VideoPlayer">
+			<div id='videocontainer'><div id='mediaspace'>Sorry, your browser need flash plugin to play video (2005 power)</div></div>
+</div>
+{/literal}
+</div>
+	</div>
