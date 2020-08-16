@@ -42,6 +42,10 @@ class User implements UserInterface, \Serializable
      */
     private $password;
 
+
+    private $apiKey='';
+
+
     public function __construct()
     {
         // may not be needed, see section on salt below
@@ -53,9 +57,12 @@ class User implements UserInterface, \Serializable
         return $this->id;
     }
 
-    public function setId($id)
-    {
-        $this->id=$id;
+    public function setApiKey($api){
+        $this->apiKey = $api;
+    }
+
+    public function getApiKey(){
+        return $this->apiKey;
     }
 
     public function getUsername()

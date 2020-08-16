@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Entity\Album;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +13,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use App\Service\TokenManager;
 
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
@@ -31,6 +31,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
+        if ($request->query->has('token') && $request->query->get('token')!="")
+            return true;
+
         return $request->headers->has('X-AUTH-TOKEN');
     }
 
@@ -40,7 +43,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        return $request->headers->get('X-AUTH-TOKEN');
+        if ($request->headers->has('X-AUTH-TOKEN'))
+            return $request->headers->get('X-AUTH-TOKEN');
+        return $request->query->get('token');
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
@@ -50,20 +55,26 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             // Code 401 "Unauthorized"
             return null;
         }
-        var_dump($credentials);
-        $tokenManager = new TokenManager();
-        $token = $tokenManager->getToken($credentials);
-        if ($token==null)
+        //$pager = $this->getDoctrine()->getRepository('App:Album')->search(
+        //$token=$this->get('security.token_storage')->getToken();
+        
+        //$userid = $this->session->get('userid',0);
+        $userid=0;
+        //$user = $token->getUser();
+       // if ($user=$this->security->getUser()) {
+       //     $user->setApiKey($credentials);
+       //     return $user;
+       // }
+
+
+        $album = $this->em->getRepository('App:Album')->findOneBy(['idPub' => $credentials]);
+        if ($album == null)
             return null;
 
-        if ($token['type']=='USER')     
-        // if a User is returned, checkCredentials() is called
-            return $this->em->getRepository(User::class)
-                ->findOneBy(['id' => $token['idObject']]);
-        else
-            return $this->em->getRepository(User::class)
-            ->findOneBy(['id' => 0]);
-        
+        $user=$this->em->getRepository(User::class)
+            ->findOneBy(['id' => $userid]);
+        $user->setApiKey($credentials);
+        return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -72,9 +83,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         // In case of an API token, no credential check is needed.
 
         // Return `true` to cause authentication success
-        $tokenManager = new TokenManager();
-        if ($tokenManager->getToken($credentials)==null)
-            return false;
         return true;
     }
 
@@ -86,6 +94,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
+       
         $data = [
             // you may want to customize or obfuscate the message first
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
@@ -112,6 +121,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function supportsRememberMe()
     {
-        return false;
+        return true;
     }
 }

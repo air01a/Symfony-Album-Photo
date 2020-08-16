@@ -7,7 +7,6 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
-use App\Service\TokenManager;
 
 
 class ApiVoter extends Voter
@@ -55,6 +54,13 @@ class ApiVoter extends Voter
 
     private function canView(Album $album, User $user)
     {
+
+        if ($user->getApiKey()!='') {
+            if ($user->getApiKey()==$album->getIdPub())
+                return true;
+            else
+                return false;
+        }
 
         foreach($album->getRights() as $right)
             if ($right->getUserId()==$user->getId())

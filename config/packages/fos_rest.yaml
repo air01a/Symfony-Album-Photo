@@ -19,5 +19,6 @@ fos_rest:
     format_listener:
         rules:
             - { path: ^/api, prefer_extension: true, fallback_format: json, priorities: [ json, jpeg ] }
-            - { path: ^/, prefer_extension: false, priorities: [ html ] }
+            - { path: ^/, prefer_extension: false, fallback_format: html, priorities: [ html ] }
+
     param_fetcher_listener: true

@@ -18,12 +18,11 @@ class AlbumViewController extends AbstractController
      */
     public function albumview(Request $request) 
     {
-        $tokenManager = new TokenManager();
-        $user = $this->getUser();
-        $token=$tokenManager->createToken('USER',$user->getId());
         $id_album=$request->query->get('id_album');
         if ($id_album==NULL)
             $id_album='false';
+        $token=$request->query->get('token');
+        
           //  var_dump($id_album);die;
 
         return $this->render('album/album.html.twig', [
@@ -43,14 +42,14 @@ class AlbumViewController extends AbstractController
     public function albumPublicView(int $idAlbum,Request $request) 
     {
 
-        $hash=$request->query->get('hash');
-        if ($hash==NULL)
-            $hash='false';
+        $token=$request->query->get('token');
+        if ($token==NULL)
+            $token='false';
 
-        return $this->render('public.html.twig', [
-            'idAlbum'=>$idAlbum,
-            'hash'=>$hash
-        ]);
+            return $this->render('album/album.html.twig', [
+                'idAlbum'=>$idAlbum,
+                'token'=>$token
+            ]);
     }
 }
 

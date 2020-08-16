@@ -5,18 +5,43 @@
   idgal={{ idAlbum }};
   hashgal=false;
   token = "{{ token }}";
+
+
+          
 </script>
 {% verbatim %}
-<script src="js/app.js"></script>
-<script src="video/swfobject.js"></script>
-<link rel="stylesheet" href="css/jquery-ui.min.css">
-<script src="js/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="css/ddvideogallery.css" />
-<script src="js/ddvideogallery.js"></script>
+<script src="/js/app.js"></script>
+<script src="/video/swfobject.js"></script>
+<link rel="stylesheet" href="/css/jquery-ui.min.css">
+<script src="/js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="/css/ddvideogallery.css" />
+<script src="/js/ddvideogallery.js"></script>
 <div id="photocontrol">
 </div>
 <div ng-controller="GalleryCtrl" id="mainCtrl">
+<script>
+class AuthImg extends HTMLImageElement {
+            constructor() {
+                super();
+                this._lastUrl = '';
+            }
 
+            static get observedAttributes() {
+                return ['authSrc'];
+            }
+
+            connectedCallback() {
+                let url = this.getAttribute('authSrc');
+                if (url !== this._lastUrl) {
+                    this._lastUrl = url;
+                    requestImage(url, this);
+                }
+                console.log('connectedCallback() is called.');
+            }
+        }
+
+        window.customElements.define('auth-img', AuthImg, {extends: 'img'});
+</script>
 	<div ng-hide="showphoto">
 		<h3>
 			 <span class="col1">Nos Photos</span>
@@ -92,8 +117,9 @@ $(document).ready(function() {
 		<div style="height: 8px;"></div>
 		<div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper">
 			<div class="photos">
-				<a class="fullsizable" id="pht{{ $index }}" href="/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?thumb=0" alt="{{ photo.commentaire }}">
-					<div class="minimg" style="display: block;background-image:url(/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download)"></div>
+				<a class="fullsizable" id="pht{{ $index }}" href="/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?thumb=0&token={{ token }}" alt="{{ photo.commentaire }}">
+					<div  class="minimg" style="display: block;background-image:url(/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?token={{ token }})"></div>
+
 				</a>
 			</div>
 			<div class="commentaire" > {{ photo.commentaire }}</div>

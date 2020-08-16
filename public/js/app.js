@@ -1,24 +1,37 @@
 
 angular.module('delr1', [])
 	.controller('GalleryCtrl', function($scope,$http) {
-		$http.defaults.headers.get = { 'X-AUTH-TOKEN' : token };
-
+		if (token!=""){
+			//console.log("xauth " + token)
+			$http.defaults.headers.get = { 'X-AUTH-TOKEN' : token };
+		}
 		$scope.alert=function(msg) {
 			alert(msg);
+		}
+
+
+		$scope.requestImage = function(url,element) {
+
+			$http.get(url)
+				.success(function(res){
+					element.src=URL.createObjectURL(res);
+					element.onload = () => {
+                        URL.revokeObjectURL(element.src);
+                    }
+				});
+
+
+
 		}
 
    	 	$scope.actShowPhoto = function(id) {
 			$scope.back=$(window).scrollTop();
 	   		$scope.showphoto=true;
 			param='';
-			if (hashgal){
-				param='?alphanum_hash='+hashgal;
-				$scope.hash=hashgal;
-			}
 
 			$http.get('/api/v1/albums/'+id)
        				.success(function(res){
-	      				$scope.album = res;
+						  $scope.album = res;
 					$scope.videotab=$scope.album.youtube.match(/[^\r\n]+/g);
 					if ($scope.videotab!=null){
 						$scope.videotabshow=true;
@@ -179,8 +192,8 @@ angular.module('delr1', [])
                 $scope.gallery={};
                 $scope.link=[];
                 $scope.filter="";
-		$scope.hash="";
-		if (hashgal) {
+		$scope.token=token;
+		if (idgal) {
                 	$scope.showphoto=true;
 			$scope.hash=hashgal;
 			$scope.actShowPhoto(idgal);
