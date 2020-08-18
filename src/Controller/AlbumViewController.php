@@ -6,7 +6,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use App\Service\TokenManager;
+use App\Services\TokenCacher;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class AlbumViewController extends AbstractController
 {
@@ -16,18 +18,19 @@ class AlbumViewController extends AbstractController
      *
      * @Route("/album", name="albumview")
      */
-    public function albumview(Request $request) 
+    public function albumview(Request $request, TokenCacher $JWTManager) 
     {
         $id_album=$request->query->get('id_album');
         if ($id_album==NULL)
             $id_album='false';
-        $token=$request->query->get('token');
-        
-          //  var_dump($id_album);die;
+
+        $user = $this->getUser();
+        $token=$JWTManager->createToken($user);
 
         return $this->render('album/album.html.twig', [
             'idAlbum'=>$id_album,
-            'token'=>$token
+            'token'=>$token,
+            'tokenAlbum'=>false
         ]);
     }
 
@@ -39,16 +42,31 @@ class AlbumViewController extends AbstractController
      * requirements = {"idAlbum"="\d"}
 
      */
-    public function albumPublicView(int $idAlbum,Request $request) 
+    public function albumPublicView(int $idAlbum,Request $request, TokenCacher $JWTManager) 
     {
 
-        $token=$request->query->get('token');
-        if ($token==NULL)
-            $token='false';
+        $tokenAlbum=$request->query->get('token');
+        if ($tokenAlbum==NULL)
+            $tokenAlbum='false';
+        else {
+            $user = $this->getUser();
+            if ($user==null)
+            {
+                $user = $this->getDoctrine()
+                    ->getRepository('App:User')
+                    ->find(0);
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    $this->container->get('security.token_storage')->setToken($token);
+                    $this->container->get('session')->set('_security_main', serialize($token));
+            }
+            $user->setApiKey($tokenAlbum);
+            $token=$JWTManager->createToken($user);
+        }
 
             return $this->render('album/album.html.twig', [
                 'idAlbum'=>$idAlbum,
-                'token'=>$token
+                'token'=>$token,
+                'tokenAlbum'=>$tokenAlbum
             ]);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Exclude;
+
 use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * User
@@ -39,8 +41,10 @@ class User implements UserInterface, \Serializable
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
+     * @exclude
      */
     private $password;
+
 
 
     private $apiKey='';
@@ -100,7 +104,12 @@ class User implements UserInterface, \Serializable
 
     public function getRoles()
     {
-        return array('ROLE_USER');
+        $data = json_decode($this->roles, true);
+        if ($data==null)
+            return array("USER_ROLE");
+        if (!in_array("USER_ROLE",$data))
+            array_push($data,"USER_ROLE");
+        return $data;
     }
 
     public function eraseCredentials()
@@ -114,6 +123,7 @@ class User implements UserInterface, \Serializable
             $this->id,
             $this->username,
             $this->password,
+            $this->apiKey
             // see section on salt below
             // $this->salt,
         ));
@@ -126,6 +136,7 @@ class User implements UserInterface, \Serializable
             $this->id,
             $this->username,
             $this->password,
+            $this->apiKey
             // see section on salt below
             // $this->salt
         ) = unserialize($serialized);

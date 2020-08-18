@@ -44,13 +44,16 @@
                                 <div class="menu_block">
 
                                         <nav  class="" >
-                                                <ul class="sf-menu">
+                                                <ul class="sf-menu">{% if app.user !=null and app.user.username!='ANONYMOUS' %}
                                                         {% for link in links %}
                                                         <li {% if app.request.attributes.get("_route") == link.route  %}class="current"{% endif %}><a href="{{  path(link.route) }}">{{ link.path }}</a></li>
                                                         {% endfor %}
-                                                        <li {% if app.request.attributes.get("_route") == 'admin' %} class="current"{% endif %}><a href="{{ 'admin' }}">Admin</a></li>
-                                                         <li><a href="logout">Quitter</a></li>  
-                                                         <li>{{ app.request.attributes.get("_route") }}</li>
+                                                        {%  if is_granted('ROLE_ADMIN') %}
+                                                        <li {% if app.request.attributes.get("_route") == 'adminview' %} class="current"{% endif %}><a href="{{ 'admin' }}">Admin</a></li>
+                                                        {% endif %}
+                                                        {% endif %}
+                                                         <li><a href="/logout">{% if app.user !=null and app.user.username!='ANONYMOUS' %}Quitter{% else %}Login{% endif %}</a></li>
+                            
                                                </ul>
                                         </nav>      
                                 <div class="clear"></div>

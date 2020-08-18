@@ -124,5 +124,57 @@ class PhotoController extends AbstractFOSRestController
         return $this->downloadActionHelper($album,$photo,$paramFetcher->get('thumb'));
     }
 
+         /**
+     * @Rest\Get("/downloadbyhash/{id}/photos/{idPhoto}", name="app_photos_downloadbyhash")
+     * requirements = {"id"="\d+", "idPhoto"="\d+"}
+     * @Rest\View
+     * @ParamConverter("photo", options={"id" = "idPhoto"})
+     * @Rest\QueryParam(
+     *     name="thumb",
+     *     requirements="\d",
+     *     nullable=true,
+     *     default="1",
+     *     description="0 to full size, 1 for thumbnail"
+     * )
+     * @Rest\QueryParam(
+     *     name="token",
+     *     requirements="[A-Za-z0-9]*",
+     *     nullable=true,
+     *     default="",
+     *     description="token"
+     * )
+     * 
+
+     */
+    public function downloadbyhashAction(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher)
+    {
+        $token = $paramFetcher->get('token');
+        if ($token!=null)
+        {
+            $this->getUser()->setApiKey($token);
+        }
+        return $this->downloadActionHelper($album,$photo,$paramFetcher->get('thumb'));
+    }
+
+    /**
+     * @Rest\View(StatusCode = 200)
+     * @Rest\Patch(
+     *     path = "/api/v1/albums/{id}/photos/{idPhoto}",
+     *     name = "app_photo_partupdate",
+     *     requirements = {"id"="\d+", "idPhoto"="\d+"}
+     *  )
+     *  @ParamConverter("photo", options={"id" = "idPhoto"})
+     * 
+     */
+    public function partialUpdateAction(Album $album, Photos $photo, Request $request)
+    {
+        $this->denyAccessUnlessGranted('edit', $album);
+
+        $em = $this->getDoctrine()->getManager();
+        $data = json_decode($request->getContent());
+        $em->persist($photo->setParameters($data));
+        $em->flush();
+        return $photo;
+    }
     
 }

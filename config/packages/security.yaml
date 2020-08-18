@@ -14,14 +14,33 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
+        login:
+            pattern:  ^/api/login_check
+            stateless: true
+            anonymous: true
+            json_login:
+                require_previous_session: false
+                check_path:               /api/login_check
+                success_handler:          lexik_jwt_authentication.handler.authentication_success
+                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+        api:
+            anonymous: true
+            lazy: true
+            provider: app_user_provider
+            pattern: ^/api/
+            stateless: true
+            guard:
+                authenticators:
+#                    - lexik_jwt_authentication.jwt_token_authenticator
+                     - App\Security\JwtTokenAuthenticator
+            logout:
+                path: app_logout            
         main:
             anonymous: true
             lazy: true
             provider: app_user_provider
             guard:
                 authenticators: 
-                    - App\Security\TokenAuthenticator
                     - App\Security\LoginFormAuthenticator
                 entry_point: App\Security\LoginFormAuthenticator            
             logout:
@@ -38,6 +57,7 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #        - { path: ^/api/v1/albumpublic*, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/albumpublic*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/.*, roles: IS_AUTHENTICATED_FULLY }

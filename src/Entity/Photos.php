@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Inflector\Inflector;
 
 /**
  * Photos
@@ -64,11 +65,24 @@ class Photos
         $this->path=$path;
     }
 
-    public function getComment() {
+    public function getCommentaire() {
         return $this->commentaire;
     }
     
-    public function setComment($comment) {
+    public function setCommentaire($comment) {
         $this->commentaire=$comment;
+    }
+
+
+    public function setParameters($params) {
+        foreach ($params as $k => $p) {
+            if (!is_null($p)) { // here is the if statement
+                $key = Inflector::camelize($k);
+                if (property_exists($this, $key)) {
+                    $this->{'set' . ucfirst($key)}($p);
+                }
+            }
+        }
+        return $this;
     }
 }

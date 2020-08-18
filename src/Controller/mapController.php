@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Services\TokenCacher;
 
 class mapController extends AbstractController
 {
@@ -14,11 +15,13 @@ class mapController extends AbstractController
      *
      * @Route("/map", name="map")
      */
-    public function slideshow() 
+    public function mapShow(TokenCacher $JWTManager) 
     {
        
+        $user = $this->getUser();
+        $token=$JWTManager->createToken($user);
 
-        return $this->render('map/map.html.twig', []);
+        return $this->render('map/map.html.twig', ['token'=>$token]);
     }
 }
 

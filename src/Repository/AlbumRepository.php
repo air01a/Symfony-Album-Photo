@@ -14,7 +14,7 @@ class AlbumRepository extends AbstractRepository
                          ->join('a.rights','r');
 
         $qb
-                         ->where('r.userId = ?1')
+                         ->where('r.user = ?1')
                          ->setParameter(1,$userId)
                         ;
 
@@ -43,7 +43,7 @@ class AlbumRepository extends AbstractRepository
                          ->join('a.rights','r');
 
         $qb
-                         ->where('r.userId = ?1')
+                         ->where('r.user = ?1')
                          ->setParameter(1,$userId)
                          ->GroupBy('a.country');
     
@@ -57,7 +57,7 @@ class AlbumRepository extends AbstractRepository
             ->from('App:Album', 'a')
             ->where('a.country = :country')
             ->join('a.rights','r')
-            ->andWhere('r.userId = :userId')
+            ->andWhere('r.user = :userId')
             ->setParameter('country',$country)
             ->setParameter('userId',$userId);
 

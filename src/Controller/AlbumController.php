@@ -1,16 +1,12 @@
 <?php
-// src/Controller/AlbumController.php
 namespace App\Controller;
 
 use App\Entity\Album;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-//use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-//use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Request\ParamFetcherInterface;
-//use App\Repository\AlbumRepository;
 use App\Representation\Albums;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +28,6 @@ class AlbumController extends AbstractFOSRestController
 
         $em = $this->getDoctrine()->getManager();
 
-        $em->persist($album);
         $em->flush();
 
         return $album;

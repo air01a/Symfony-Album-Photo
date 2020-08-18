@@ -13,6 +13,12 @@ class ApiVoter extends Voter
 {
     const VIEW = 'view';
     const EDIT = 'edit';
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
 
     protected function supports(string $attribute, $subject)
     {
@@ -21,6 +27,7 @@ class ApiVoter extends Voter
             return false;
         }
 
+        
         // only vote on `Post` objects
         if (!$subject instanceof Album) {
             return false;
@@ -32,7 +39,6 @@ class ApiVoter extends Voter
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token)
     {
         $user = $token->getUser();
-
         if (!$user instanceof User) {
             // the user must be logged in; if not, deny access
             return false;
@@ -54,24 +60,25 @@ class ApiVoter extends Voter
 
     private function canView(Album $album, User $user)
     {
+        foreach($album->getRights() as $right)
+            if ($right->getUser()->getId()==$user->getId())
+                return true;
 
-        if ($user->getApiKey()!='') {
+        if (($album->getPublic()) && ($user->getApiKey()!='')) {
             if ($user->getApiKey()==$album->getIdPub())
                 return true;
             else
                 return false;
         }
 
-        foreach($album->getRights() as $right)
-            if ($right->getUserId()==$user->getId())
-            return true;
+
         
         return false;
     }
 
     private function canEdit(Album $album, User $user)
     {
-        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) 
+        if ($this->security->isGranted('ROLE_ADMIN')) 
             return true;
 
         return false;    

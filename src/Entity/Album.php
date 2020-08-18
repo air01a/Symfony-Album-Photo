@@ -6,9 +6,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Exclude;
 
-
-
-
 /**
  * Album
  *
@@ -108,7 +105,7 @@ class Album
     }
 
     public function setDate($date) {
-        $this->date = $date;
+        $this->date = new \DateTime($date);
     }
 
     public function getName() {
@@ -197,6 +194,7 @@ class Album
         foreach ($params as $k => $p) {
             if (!is_null($p)) { // here is the if statement
                 $key = Inflector::camelize($k);
+                
                 if (property_exists($this, $key)) {
                     $this->{'set' . ucfirst($key)}($p);
                 }

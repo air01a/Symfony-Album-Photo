@@ -15,8 +15,8 @@ class PhotoRepository extends EntityRepository
                          ->select('p')
                          ->from('App:Photos', 'p')
                          ->where('p.albumId = ?1')
-                         ->setParameter(1,$id);
-
+                         ->setParameter(1,$id)
+                         ->orderBy('p.path','asc');   
         return $qb->getQuery()->getResult();
     }
 

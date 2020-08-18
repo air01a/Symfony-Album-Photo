@@ -1,3 +1,6 @@
 Error handling View in AlbumController
-Right management
+better Right management
+bug when got to map->one album -> back (mepty album list)
+album creation
+photo upload
 

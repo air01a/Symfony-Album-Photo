@@ -3,22 +3,51 @@
 
 <script>
   idgal={{ idAlbum }};
-  hashgal=false;
+  hashgal= "{{ tokenAlbum }}";
   token = "{{ token }}";
-
-
-          
+  admin=false;
+  baseURL = "{{ app.request.getSchemeAndHttpHost() }}";
 </script>
-{% verbatim %}
+
 <script src="/js/app.js"></script>
-<script src="/video/swfobject.js"></script>
 <link rel="stylesheet" href="/css/jquery-ui.min.css">
 <script src="/js/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="/css/ddvideogallery.css" />
 <script src="/js/ddvideogallery.js"></script>
+<script src="/js/imgsrc.js"></script>
+<script src="/js/ngDialog.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/ngDialog.min.css" />
+<link rel="stylesheet" href="/css/ngDialog-theme-default.css">
+
 <div id="photocontrol">
 </div>
 <div ng-controller="GalleryCtrl" id="mainCtrl">
+
+{%  if admin|default(null)   %}
+{% verbatim %}
+
+<script>
+  admin=true;
+</script>
+<script type="text/ng-template" id="modalid">
+    <h1>Insert comment</h1>
+    <p><input type="text" ng-model="currentcomment" id="inputcomment" autofocus ></p>
+<div class="ngdialog-buttons">
+			<button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="updateComment(currentcommentindex,currentcomment)">Save</button>
+			<button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog()">Close</button>
+		</div>
+</script>
+
+<script type="text/ng-template" id="countryselection">
+  <div style="overflow : scroll;height: 400px;">
+  <h1><b>Country List</b></h1><br /><hr />
+  <span id="countrycontent" ng-repeat="country in countryMapping | orderBy:'code'"><a href ng-click="album.country=country.name;closeThisDialog('Some value')">{{country.code}} : {{country.name}}</a><br /></span>
+  </div>
+</script>
+{% endverbatim %}
+{% endif %}
+{% verbatim %}
+
 <script>
 class AuthImg extends HTMLImageElement {
             constructor() {
@@ -63,7 +92,7 @@ class AuthImg extends HTMLImageElement {
 				<a href ng-click="actShowPhoto(album.id)">
 					<div class="photofigure">
 						<div class="photodate">{{ album.date }}</div>
-						<div class="image" style="display: block;background-image:url(/api/v1/albums/{{ album.id }}/photos/random)"  alt="#gal.caption#" /></div>
+						<div class="center-cropped" style="display:block;"><img class="ngimg" http-src="/api/v1/albums/{{ album.id }}/photos/random" alt="#gal.caption#" /></div>
 					<div class="photocomment">{{ album.name }}</div>
 					</div>
 				</a>
@@ -101,24 +130,79 @@ $(document).ready(function() {
 });
 
 </script>
+
+{% endverbatim %}
+
+{%  if admin|default(null)   %}
+{% verbatim %}
+	<div ng-show="showphoto" style="text-align:center;margin-left: auto; margin-right: auto">
+
+				<h3 class="pb1"><span class="col1">Admin</span></h3>
+                <h4>Galerie <input type="text" ng-model="album.name" size="50"></h4>
+                <a href ng-click="showphoto=0"><img class="img_inner fleft" src="images/g1.png" width="40px"></a>                <div class="extra_wrapper" style="text-align: left">
+                <p>
+                        <b><input type="text" ng-model="album.date"></b>Pays:
+			   <input type="text" size="2" ng-model="album.country"><button type="button" class="defaultbutton red" ng-click="displayCountry()">List</button>
+			<br /><textarea cols="100" ng-model="album.commentaire"></textarea>
+			<p>Youtube</p>
+			<br /><textarea cols="100" ng-model="album.youtube"></textarea>
+                </p></div>
+		<p style="float: left">
+                <button type="button" class="defaultbutton red" ng-click="managePublic(1)" ng-show="album.public==0">Public</button>
+               	<div ng-show="album.public==1" style="float: left">
+                        <button type="button" class="defaultbutton green" ng-click="managePublic(0)">Private</button>
+                        {{ baseUrl }}/albumpublic/{{album.id}}?token={{album.id_pub}}
+                </div></p><p style="height: 20px"></p>
+
+		<div class="right_wrapper">
+			<div ng-repeat="right in rights" class="right_box">
+				<label>{{right.username}}</label> <input type="checkbox" name="{{right.id}}" ng-model="rights[$index].hasRight" >
+			</div>
+                </div><br />
+
+			<button type="button" class="defaultbutton blue"  ng-click="saveInfo()">Enregistrer</button><img src="/images/validate.png" width="20px" ng-show="inprogress==2">
+		<br />
+		<img src="/images/ajax-loader.gif" width="40px" ng-show="inprogress==1">
+                <center>
+                <div style="height: 8px;"></div>
+
+                </center><div style="height: 8px;"></div>
+                <div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper">
+                        <div class="photos">
+                                <a href  ng-click="showCom(photo.id,$index)" alt="{{photo.commentaire}}">
+                                        <div class="minimg" style="display: block;"><img class="ngmini" http-src="/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?thumb=1"></div>
+                        </div>&nbsp;
+                        <div class="commentaire" >{{photo.commentaire}}</div>
+                </div>
+
+{% endverbatim %}
+{% else %}
+{% verbatim %}
 	<div ng-show="showphoto" style="text-align:center;margin-left: auto; margin-right: auto">
 		
 		<h3 class="pb1"><span class="col1"> {{ album.name }} </span></h3>
-		<a href ng-click="returnToGal()"><img id="backimg" class="img_inner fleft" src="images/g1.png" width="40px"></a>
-		<a href="/api/v1/albums/{{album.id}}/"><img class="img_inner fleft" src="images/zip.png" height="40px" id="zipimg"></a>
-		<a href ng-click="diaporama()"><img class="img_innet fleft" src="images/play_file.png"  height="40px" id="diap">
-		<a href ng-click="showVideo()"><img class="img_inner fleft" src="images/video_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a>
-		<a href ng-click="goToVideo()"><img class="img_inner fleft" src="images/video_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a>
+{% endverbatim %}
+
+{% if app.user !=null and app.user.username!='ANONYMOUS' %}		
+		<a href ng-click="returnToGal()"><img id="backimg" class="img_inner fleft" src="/images/g1.png" width="40px"></a>
+{% endif %}
+
+{% verbatim %}
+	</p>
+		<a href="/api/v1/albums/{{album.id}}/"><img class="img_inner fleft" src="/images/zip.png" height="40px" id="zipimg"></a>
+		<a href ng-click="diaporama()"><img class="img_innet fleft" src="/images/play_file.png"  height="40px" id="diap">
+		<a href ng-click="showVideo()"><img class="img_inner fleft" src="/images/video_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a>
+		<a href ng-click="goToVideo()"><img class="img_inner fleft" src="/images/video_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a>
 		<div class="extra_wrapper" style="text-align: left">
-		<p>
 			<b>{{ album.date }} </b><br /> {{ album.commentaire }}
                 </p></div>
+
 		<center>
 		<div style="height: 8px;"></div>
 		<div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper">
 			<div class="photos">
-				<a class="fullsizable" id="pht{{ $index }}" href="/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?thumb=0&token={{ token }}" alt="{{ photo.commentaire }}">
-					<div  class="minimg" style="display: block;background-image:url(/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?token={{ token }})"></div>
+				<a class="fullsizable" id="pht{{ $index }}" href="/downloadbyhash/{{ album.id }}/photos/{{ photo.id }}?thumb=0&token={{ tokenAlbum }}" alt="{{ photo.commentaire }}">
+					<div  class="minimg" style="display: block;"><img class="ngmini" http-src="/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?thumb=1"></div>
 
 				</a>
 			</div>
@@ -132,9 +216,8 @@ $(document).ready(function() {
 	<div class="videoNav"></div>
 </div>
 </p>
-
 {% endverbatim %}
-
+{% endif %}
 		</center>
 
 

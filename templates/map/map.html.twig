@@ -15,6 +15,9 @@
 {% endblock %}
 
 {% block body %}
+<script>
+token = "{{ token }}";
+</script>
 {% verbatim %}
 
 <style>
@@ -65,8 +68,11 @@ function showCountry(code) {
 <script>
 
 $(document).ready(function() {
-		console.log("test13");
-
+      $.ajaxSetup({
+        headers:{
+          'Authorization': "bearer "+token
+        }
+      });
       $.get('/api/v1/country',function(data) {
       countryList=[];
       countryListColor={}
