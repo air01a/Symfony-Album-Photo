@@ -1,5 +1,4 @@
 var countryMapping=[];
-
 countryMapping.push({name:'AF',code:'AFGHANISTAN'});
 countryMapping.push({name:'ZA',code:'AFRIQUE DU SUD'});
 countryMapping.push({name:'AX',code:'ALAND, ILES'});
@@ -275,73 +274,174 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$('#inputcomment').focus();
 		});
 
-
-
+		//************************************************************************
+		//* Set or unset public attribute on album
+		//* 
+		//************************************************************************
 		$scope.managePublic = function(action) {
 			console.log($scope.album);
 			if ((action==1) && ($scope.album.id_pub==undefined || $scope.album.id_pub==""))
 				$scope.album.id_pub = makeRandomString(20);
 			$http.patch("/api/v1/albums/"+$scope.album.id,JSON.stringify({'public':action,'id_pub':$scope.album.id_pub}))
-				.then(function(res) {
-					
+				.then(function(res) {	
 					$scope.album=res.data;
 				});
-	   }
-	   
-	   $scope.displayCountry = function() {
-		   ngDialog.open({ template: 'countryselection',className: 'ngdialog-theme-default',scope:$scope });
-	   }
+		}
 
-	   $scope.showCom = function (id,index) {
-		   $scope.currentcommentindex=index;
-		   $scope.currentcomment=$scope.photos[index].commentaire;
-		   $scope.dialogid=ngDialog.open({ template: 'modalid',className: 'ngdialog-theme-default',scope:$scope });
-		   
-	   }
+		//************************************************************************
+		//* Open country selection popup
+		//* 
+		//************************************************************************   
+		$scope.displayCountry = function() {
+			ngDialog.open({ template: 'countryselection',className: 'ngdialog-theme-default',scope:$scope });
+		}
 
+		//************************************************************************
+		//* delete album popup
+		//* 
+		//************************************************************************   
+		$scope.deleteAlbum = function(validation) {
+			if (validation!="OK")
+				$scope.deleteDialog=ngDialog.open({ template: 'deleteAlbum',className: 'ngdialog-theme-default',scope:$scope });
+		}
 
-	   $scope.updateComment = function (index,comment) {
+		//************************************************************************
+		//* Show comment on image click 
+		//* 
+		//************************************************************************
+		$scope.showCom = function (id,index) {
+			$scope.currentcommentindex=index;
+			$scope.currentcomment=$scope.photos[index].commentaire;
+			$scope.dialogid=ngDialog.open({ template: 'modalid',className: 'ngdialog-theme-default',scope:$scope });
+			
+		}
+
+		//************************************************************************
+		//* Update comment on photo
+		//* 
+		//************************************************************************
+		$scope.updateComment = function (index,comment) {
 			$http.patch("/api/v1/albums/"+$scope.album.id+"/photos/"+$scope.photos[index].id,JSON.stringify({'commentaire': comment}))
 				.then(function(res) {
 					$scope.photos[index]=res.data;
 					ngDialog.close($scope.dialogid);
 
 				});
-	   }
+		}
 
-	   $scope.saveInfo = function() {
-		right2send="";
-		$scope.inprogress=1;
-		/*
-		for (var i = 0; i < $scope.rights.length; i++) {
-			if ($scope.rights[i].selected)
-				right2send+=$scope.rights[i].id+"|";
-		}*/
-		var u = []
-		$scope.rights.forEach(element => {
-			if (element.hasRight)
-				u.push({ 'id': element.id} )
+		
+		//************************************************************************
+		//* Upload photos 
+		//* 
+		//************************************************************************
+		$scope.uploadOneFile=function (file,album) {
+			$http.post('/api/v1/albums/'+album+'/photos',{'album_id':album})
+						.then(function(res) {
+							$scope.upload[file.name]='Downloading';
+							photo=res.data;
+							form_data = new FormData();
+							form_data.append('file[]', file); 
+							$http.post('/api/v1/albums/'+album+'/photos/'+photo.id,form_data,{headers: {
+								'Content-Type': undefined
+							  },
+							  transformRequest: angular.identity
+							})
+								.then(function (res){
+									$scope.upload[file.name]='Downloaded';
+									$scope.uploadInProgres--;
+									if($scope.uploadInProgres==0)
+										$scope.actShowPhoto(album);
+								}, function (res) {
+									$scope.upload[file.name]='Error';
+									$scope.uploadInProgres--;
+									if($scope.uploadInProgres==0)
+										$scope.actShowPhoto(album);
+								}
+								
+								);
+						});
 
-		});
-		$http.post('/api/v1/albums/'+$scope.album.id+'/rights',JSON.stringify(u))
-			.then(function(res){
-				$scope.showRights($scope.album.id);
+		};
+
+
+		$scope.manageFileUpload = function(file_obj) {
+			if(file_obj != undefined) {
+				album = $scope.album.id;
+				ngDialog.open({ template: 'uploadid',className: 'ngdialog-theme-default',scope:$scope });
+				$scope.uploadInProgres=0;
+				$scope.upload={};
+				for(i=0; i<file_obj.length; i++) {
+					console.log(file_obj[i]);
+					$scope.upload[file_obj[i].name]='waiting';
+					$scope.uploadInProgres++;
+					$scope.uploadOneFile(file_obj[i],album) 
+				
+				}
+				$('#selectfile').val('');
+			}
+		};
+
+		$scope.upload_file = function(e) {
+			e.preventDefault();
+			$scope.manageFileUpload(e.dataTransfer.files);
+		};
+
+
+		//************************************************************************
+		//* Upload photos 
+		//* 
+		//************************************************************************
+		$scope.createAlbum = function () {
+			var today = new Date();
+			var dd = String(today.getDate()).padStart(2, '0');
+			var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+			var yyyy = today.getFullYear();
+
+			today = yyyy + '-' + mm + '-' + dd;
+			$http.post('/api/v1/albums',{'name':'temp','date':today, 'commentaire':'', 'path':''})
+				.then(function(res) {
+					$scope.actShowPhoto(res.data.id);
+				});
+
+		};
+
+		//************************************************************************
+		//* Click on button save 
+		//* 
+		//************************************************************************
+
+	    $scope.saveInfo = function() {
+			right2send="";
+			$scope.inprogress=1;
+
+			// Manage rights
+			var u = []
+			$scope.rights.forEach(element => {
+				if (element.hasRight)
+					u.push({ 'id': element.id} )
+
 			});
+			$http.post('/api/v1/albums/'+$scope.album.id+'/rights',JSON.stringify(u))
+				.then(function(res){
+					$scope.showRights($scope.album.id);
+				});
 
-		$http.patch('/api/v1/albums/'+$scope.album.id, 
-				       {'name':$scope.album.name,'date':$scope.album.date,'commentaire':$scope.album.commentaire,'country':$scope.album.country,'youtube':$scope.album.youtube})
-					.then(function(data, status, headers, config) {
-						$scope.inprogress=2;
-						$timeout(function () { $scope.inprogress=0 }, 3000);
-					  },
-					function(data, status, headers, config) {
-						alert(data.error);
-						$scope.inprogress=0;
-					  });
 
-	};
+			// Manage albums modificaiton
+			$http.patch('/api/v1/albums/'+$scope.album.id, 
+						{'name':$scope.album.name,'date':$scope.album.date,'commentaire':$scope.album.commentaire,'country':$scope.album.country,'youtube':$scope.album.youtube})
+						.then(function(data, status, headers, config) {
+							$scope.inprogress=2;
+							$timeout(function () { $scope.inprogress=0 }, 3000);
+						},
+						function(data, status, headers, config) {
+							alert(data.error);
+							$scope.inprogress=0;
+						});
+
+			};
+
 		$scope.requestImage = function(url,element) {
-
 			$http.get(url)
 				.success(function(res){
 					element.src=URL.createObjectURL(res);
@@ -349,11 +449,15 @@ angular.module('delr1', ['angular.img','ngDialog'])
                         URL.revokeObjectURL(element.src);
                     }
 				});
-
-
-
 		};
 
+		//*************************************************************************
+		//* Display Rights (admin panel)
+		//* 
+		//* Call /api/v1/albums/{idalbum}/rights : get album rights
+		//* Call /api/v1/users : get all users
+		//* Create list of all users with hasRight=true if user has rights on album
+		//*************************************************************************
 		$scope.showRights=function(id) {
 			$http.get('/api/v1/albums/'+id+'/rights')
 					.then(function(res){
@@ -363,7 +467,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 							.then(function(res){
 								$scope.users = res.data;
 								var u = [];
-									
 								$scope.users.forEach(element => {
 									console.log(element);
 									hasRight=false;
@@ -381,6 +484,12 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 		}
 
+		//************************************************************************
+		//* Display photos 
+		//*
+		//* Call /api/v1/albums/{albumid} - get Album info
+		//* Call /api/v1/albums/{albumid}/photos - get all photos
+		//************************************************************************
    	 	$scope.actShowPhoto = function(id) {
 			$scope.back=$(window).scrollTop();
 	   		$scope.showphoto=true;
@@ -390,13 +499,13 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			if (admin)
 				$scope.showRights(id);
 
-
 			$http.get('/api/v1/albums/'+id)
        				.then(function(res){
 						$scope.album = res.data;
 						$scope.videotab=$scope.album.youtube.match(/[^\r\n]+/g);
 						$http.get('/api/v1/albums/'+id+'/photos')
 							.then(function(res){
+								$scope.idAlbum=id;
 								$scope.photos=res.data;
 								$('#videoimg').effect( "shake");
 							});	
@@ -411,44 +520,49 @@ angular.module('delr1', ['angular.img','ngDialog'])
 									playlist: $scope.videotab // list of youtube video IDs. It's the last segment within a shareable Youtube URL
 							});
 							$("#videojukebox").show();
-
-							
-
-
 						}
 						else {
 							$scope.videotabshow=false;
 							$("#videojukebox").hide();
 						}
-
-
-
-
 	        		});
 				setTimeout( "$('#backimg').effect('shake');",1000 );
 				setTimeout( "$('#zipimg').effect('shake');",2000 );
-				console.log($scope.gallery.gallery);
-				if ($scope.gallery.gallery == undefined)
+				if ($scope.album == undefined)
 					return;
 
-				if ($scope.gallery.gallery.video)
+				if ($scope.album.video)
 					setTimeout( "$('#videoimg').effect('shake');",4000 );
 				if ($scope.videotabshow)
 					setTimeout( "$('#videoimg2').effect('shake');",4000 );
 				setTimeout( "$('#diap').effect('shake');",3000);
 
-    		};
+    	};
 		
 
+		//************************************************************************
+		//* Center page on video 
+		//* 
+		//************************************************************************
 		$scope.goToVideo = function() {
 			$(document).scrollTop($('#videobox').offset().top);
 		}
 
+		//************************************************************************
+		//* Manage click on album pagging 
+		//* 
+		//************************************************************************
 		$scope.actShowPage = function(page) {
 				if (page<$scope.numAlbums)
 						$scope.startGal=page;
 				$scope.displayGal();
 		};
+
+		//************************************************************************
+		//* Display video (old school flash player) 
+		//* 
+		//* TO REMOVE
+		//************************************************************************
 
 		$scope.showVideo = function() {
 				  $( "#dialog" ).dialog( "open" );
@@ -471,6 +585,11 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 		}
 	
+
+		//************************************************************************
+		//* Display diaporama 
+		//* 
+		//************************************************************************
 		$scope.diaporama = function() {
 			$("#pht0").trigger("click");
 			setTimeout(function(){
@@ -478,6 +597,11 @@ angular.module('delr1', ['angular.img','ngDialog'])
 				$("#fullsized_play_id").trigger("click");
 			}, 1000);
 		}
+
+		//************************************************************************
+		//* Update album list according to search 
+		//* 
+		//************************************************************************
 		$scope.updatesearch = function(val) {
 				if (val.length>2){
 					$scope.filter=val;
@@ -487,9 +611,14 @@ angular.module('delr1', ['angular.img','ngDialog'])
 				$scope.displayGal();
 		};
 
+
+		//************************************************************************
+		//* Show album list 
+		//* 
+		//************************************************************************
 		$scope.displayGal = function(){
 			console.log("start gal "+$scope.startGal)
-			$("#polaroid").width(Math.floor($("#polaroid").width() / 260)*260);
+		//	$("#polaroid").width(Math.floor($("#polaroid").width() / 260)*260);
 					if ($scope.startGal!=0) {
 						$page="&page="+btoa(JSON.stringify({"page":$scope.startGal+1,"limit":$scope.galLimit}));
 					} else {
@@ -512,7 +641,10 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 		}
 
-
+		//************************************************************************
+		//* Manage click on next page album pagging 
+		//* 
+		//************************************************************************
 		$scope.nextPage=function() {
 			$scope.startGal+=1;
 			if($scope.startGal*$scope.galLimit>$scope.numAlbums)
@@ -520,6 +652,10 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$scope.displayGal();
 		}
 
+		//************************************************************************
+		//* Manage click on previous page album pagging 
+		//* 
+		//************************************************************************
 		$scope.previousPage=function() {
 				$scope.startGal-=1;
 				if ($scope.startGal<0)
@@ -527,6 +663,11 @@ angular.module('delr1', ['angular.img','ngDialog'])
 				$scope.displayGal();
 		}
 
+
+		//************************************************************************
+		//* Manage click on back button 
+		//* 
+		//************************************************************************
 		$scope.returnToGal = function () {
 			idgal=false;
 
@@ -536,6 +677,12 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$scope.displayGal();
 		}
 
+
+
+		//************************************************************************
+		//* Manage jquery.fullsizable 
+		//* 
+		//************************************************************************
 		$scope.$on('ngRepeatFinished', function (ngRepeatFinishedEvent) {
 			if ($scope.showphoto){
 				$('#fullsized_go_next').off('click')
@@ -555,29 +702,29 @@ angular.module('delr1', ['angular.img','ngDialog'])
 	
 		});
 
-				$scope.tokenAlbum = hashgal;
-                $scope.startGal=0;
-                $scope.galLimit=30;
-                $scope.numGal=0;
-                $scope.gallery={};
-                $scope.link=[];
-				$scope.filter="";
-				$scope.baseUrl=baseURL;
-				$scope.countryMapping = countryMapping;
-				$scope.token=token;
+
+		//************************************************************************
+		//* Init 
+		//* 
+		//************************************************************************
+		$scope.tokenAlbum = hashgal;
+		$scope.startGal=0;
+		$scope.galLimit=30;
+		$scope.numGal=0;
+		$scope.gallery={};
+		$scope.link=[];
+		$scope.filter="";
+		$scope.baseUrl=baseURL;
+		$scope.countryMapping = countryMapping;
+		$scope.token=token;
 		if (idgal) {
-                	$scope.showphoto=true;
+            $scope.showphoto=true;
 			$scope.hash=hashgal;
 			$scope.actShowPhoto(idgal);
 		}
 		else {
 			$scope.showphoto=false;
-                	$scope.displayGal();
-			if (idgal) {
-				$scope.actShowPhoto(idgal);
-				idgal=false;
-			}
-			
+            $scope.displayGal();			
 		}
 	})
 

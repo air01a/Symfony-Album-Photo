@@ -44,9 +44,22 @@
   <span id="countrycontent" ng-repeat="country in countryMapping | orderBy:'code'"><a href ng-click="album.country=country.name;closeThisDialog('Some value')">{{country.code}} : {{country.name}}</a><br /></span>
   </div>
 </script>
+<script type="text/ng-template" id="uploadid">
+    <div ng-repeat="(key,value) in upload" class="photos_wrapper">
+		<div class="text-color: blue">{{ key }}</div><div class="text-color: green;">{{ value }}</div><BR />
+	</div>
+
+</script>
+
+<script type="text/ng-template" id="deleteAlbum">
+    <h1>Delete Album</h1>
+<div class="ngdialog-buttons">
+			<button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="deleteAlbum('OK')">Delete</button>
+			<button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog()">Close</button>
+		</div>
+</script>
 {% endverbatim %}
 {% endif %}
-{% verbatim %}
 
 <script>
 class AuthImg extends HTMLImageElement {
@@ -72,13 +85,22 @@ class AuthImg extends HTMLImageElement {
         window.customElements.define('auth-img', AuthImg, {extends: 'img'});
 </script>
 	<div ng-hide="showphoto">
+	{%  if admin|default(null)   %}
+		<h3>
+			 <span class="col1">Admin</span>
+		</h3>
+	<div><button type="button" class="defaultbutton green" ng-click="createAlbum()">Create Album<br /></button></div>
+    {% else %}
 		<h3>
 			 <span class="col1">Nos Photos</span>
 		</h3>
+	{% endif %}
 		<div class="searchbox">
 			Recherche : 
 			<input type="search" ng-model="search" ng-change="updatesearch(search)" placeholder="3 lettres min">
 		</div>
+{% verbatim %}
+
 		<div id="polaroid">
 			<p style="text-align:center">
 				<button class="pagelink" ng-click="previousPage()" ng-show="startGal!=0"><</button>
@@ -136,19 +158,19 @@ $(document).ready(function() {
 {%  if admin|default(null)   %}
 {% verbatim %}
 	<div ng-show="showphoto" style="text-align:center;margin-left: auto; margin-right: auto">
-
 				<h3 class="pb1"><span class="col1">Admin</span></h3>
+				<div style='float:right'><button type="button" class="defaultbutton red" ng-click="deleteAlbum()">Delete Album</button></div>
                 <h4>Galerie <input type="text" ng-model="album.name" size="50"></h4>
                 <a href ng-click="showphoto=0"><img class="img_inner fleft" src="images/g1.png" width="40px"></a>                <div class="extra_wrapper" style="text-align: left">
                 <p>
                         <b><input type="text" ng-model="album.date"></b>Pays:
-			   <input type="text" size="2" ng-model="album.country"><button type="button" class="defaultbutton red" ng-click="displayCountry()">List</button>
+			   <input type="text" size="2" ng-model="album.country"><button type="button" class="defaultbutton green" ng-click="displayCountry()">List</button>
 			<br /><textarea cols="100" ng-model="album.commentaire"></textarea>
 			<p>Youtube</p>
 			<br /><textarea cols="100" ng-model="album.youtube"></textarea>
                 </p></div>
 		<p style="float: left">
-                <button type="button" class="defaultbutton red" ng-click="managePublic(1)" ng-show="album.public==0">Public</button>
+                <button type="button" class="defaultbutton orange" ng-click="managePublic(1)" ng-show="album.public==0">Public</button>
                	<div ng-show="album.public==1" style="float: left">
                         <button type="button" class="defaultbutton green" ng-click="managePublic(0)">Private</button>
                         {{ baseUrl }}/albumpublic/{{album.id}}?token={{album.id_pub}}
@@ -162,6 +184,18 @@ $(document).ready(function() {
 
 			<button type="button" class="defaultbutton blue"  ng-click="saveInfo()">Enregistrer</button><img src="/images/validate.png" width="20px" ng-show="inprogress==2">
 		<br />
+		 
+	<div class="center">&nbsp;
+    <div id="drop_file_zone" ondrop="angular.element(this).scope().upload_file(event)" ondragover="return false">
+        <div id="drag_upload_file">
+            <p>Drop file(s) here</p>
+            <p>or</p>
+            <p><input type="button" value="Select File(s)" onClick="$('#selectfile').click()"></p>
+            <input type="file" id="selectfile" multiple onChange="angular.element(this).scope().manageFileUpload(this.files)">
+        </div>
+    </div>
+</div>
+
 		<img src="/images/ajax-loader.gif" width="40px" ng-show="inprogress==1">
                 <center>
                 <div style="height: 8px;"></div>
@@ -170,7 +204,7 @@ $(document).ready(function() {
                 <div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper">
                         <div class="photos">
                                 <a href  ng-click="showCom(photo.id,$index)" alt="{{photo.commentaire}}">
-                                        <div class="minimg" style="display: block;"><img class="ngmini" http-src="/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?thumb=1"></div>
+                                        <div class="minimg" style="display: block;"><img class="ngmini" http-src="/api/v1/albums/{{ idAlbum }}/photos/{{ photo.id }}/download?thumb=1"></div>
                         </div>&nbsp;
                         <div class="commentaire" >{{photo.commentaire}}</div>
                 </div>
@@ -202,7 +236,7 @@ $(document).ready(function() {
 		<div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper">
 			<div class="photos">
 				<a class="fullsizable" id="pht{{ $index }}" href="/downloadbyhash/{{ album.id }}/photos/{{ photo.id }}?thumb=0&token={{ tokenAlbum }}" alt="{{ photo.commentaire }}">
-					<div  class="minimg" style="display: block;"><img class="ngmini" http-src="/api/v1/albums/{{ album.id }}/photos/{{ photo.id }}/download?thumb=1"></div>
+					<div  class="minimg" style="display: block;"><img class="ngmini" http-src="/api/v1/albums/{{ idAlbum }}/photos/{{ photo.id }}/download?thumb=1"></div>
 
 				</a>
 			</div>

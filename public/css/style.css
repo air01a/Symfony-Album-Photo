@@ -456,10 +456,15 @@ footer {
 
 }
 .right_wrapper {
+	width: 80%
 	display: inline;
 	 overflow: hidden;
 	padding: 2px 2px 2px 2px
 	white-space: nowrap;
+	border: 3px solid black;
+	padding : 10px;
+}
+	
 }
 .right_box {
 	  border: 2px solid;
@@ -496,6 +501,35 @@ footer {
 .red {
 	color: white;
 	background: #DF0101;
+}
 
+.orange {
+	color: white;
+	background: #ffa500;
 
+}
+#drop_file_zone {
+    background-color: #EEE;
+    border: #999 5px dashed;
+    width: 290px;
+    height: 200px;
+    padding: 8px;
+    font-size: 18px;
+}
+#drag_upload_file {
+    width:50%;
+    margin:0 auto;
+}
+#drag_upload_file p {
+    text-align: center;
+}
+#drag_upload_file #selectfile {
+    display: none;
+}
+
+.center {
+		margin: auto;
+		width: 30%;
+		#border: 3px solid green;
+		#padding: 10px;
 }

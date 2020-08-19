@@ -7,8 +7,6 @@ use App\Entity\Photos;
 use App\Service\FileHelper;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -21,9 +19,9 @@ class PhotoController extends AbstractFOSRestController
     /**
      * @Rest\Post("/api/v1/albums/{id}/photos")
      * @Rest\View
-     * @ParamConverter("album", converter="fos_rest.request_body")
+     * @ParamConverter("photo", converter="fos_rest.request_body")
      */
-    public function createAction(Photos $photo, ConstraintViolationList $violations)
+    public function createAction(Album $album, Photos $photo, ConstraintViolationList $violations)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 
@@ -34,6 +32,33 @@ class PhotoController extends AbstractFOSRestController
         $em = $this->getDoctrine()->getManager();
 
         $em->persist($photo);
+        $em->flush();
+
+        return $photo;
+    }
+
+    /**
+     * @Rest\Post("/api/v1/albums/{id}/photos/{idPhoto}")
+     * requirements = {"id"="\d+", "idPhoto"="\d+"}
+     * @ParamConverter("photo", options={"id" = "idPhoto"})
+     * @Rest\View
+     */
+    public function uploadAction(Album $album, Photos $photo, Request $request)
+    {
+        $this->denyAccessUnlessGranted('edit', $album);
+
+        $uploadedFile = $request->files;
+        if ($uploadedFile==null){
+            return false;
+        }
+        $em = $this->getDoctrine()->getManager();
+        $fileHelper = new FileHelper();
+
+        $fileHelper->storeFile($album, $photo, $uploadedFile->get('file'));
+        if ($photo->getPath()==null)
+            $em->remove($photo);
+        else     
+            $em->persist($photo);
         $em->flush();
 
         return $photo;

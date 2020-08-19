@@ -2,6 +2,9 @@
 namespace App\Controller;
 
 use App\Entity\Album;
+use App\Entity\Right;
+use App\Service\FileHelper;
+
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,11 +26,19 @@ class AlbumController extends AbstractFOSRestController
         $this->denyAccessUnlessGranted('edit', $album);
 
         if (count($violations)) {
-            return $this->view("error", Response::HTTP_BAD_REQUEST);
+            return $this->view($violations, Response::HTTP_BAD_REQUEST);
         }
 
         $em = $this->getDoctrine()->getManager();
+        $right = new Right();
+        $right->setUser($this->getUser());
+        $right->setAlbum($album);
 
+        $fileHelper = new FileHelper();
+        $album->setPath($fileHelper->getRandomDirectory());
+        $fileHelper->prepareDirectory($album->getPath());
+        $em->persist($album);
+        $em->persist($right);
         $em->flush();
 
         return $album;
@@ -76,8 +87,6 @@ class AlbumController extends AbstractFOSRestController
         return new Albums($pager);
 
     }
-
-
     
     /**
      * @Rest\Get("/api/v1/albums/{id}", name="app_album_list")
@@ -90,6 +99,33 @@ class AlbumController extends AbstractFOSRestController
         $this->denyAccessUnlessGranted('view', $album);
 
         return $album;
+    }
+
+    /**
+     * @Rest\Delete("/api/v1/albums/{id}", name="app_album_delete")
+     *     name = "app_album_delete",
+     *     requirements = {"id"="\d+"}
+     * @Rest\View
+     */
+    public function deleteAction(Album $album)
+    {
+        $this->denyAccessUnlessGranted('edit', $album);
+        $em=$this->getDoctrine()->getManager();
+
+        $photos = $this->getDoctrine()->getRepository('App:Photos')->search($album->getId());
+        foreach($photos as $photo){
+            $em->remove($photo);
+        }
+
+        foreach($album->getRights() as $right)
+            $em->remove($right);
+
+        $fileHelper = new FileHelper();
+        if (strlen($album->getPath())>5)
+            if ($fileHelper->deleteDir($album->getPath())) 
+                return 'error="deleting file"';
+        $em->remove($album);
+        $em->flush();
     }
 
     /**

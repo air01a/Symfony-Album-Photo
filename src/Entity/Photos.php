@@ -45,7 +45,7 @@ class Photos
     /**
      * @var string
      *
-     * @ORM\Column(name="commentaire", type="text", length=16777215, nullable=false)
+     * @ORM\Column(name="commentaire", type="text", length=16777215, nullable=true)
      */
     private $commentaire;
 

@@ -63,14 +63,14 @@ class Album
     /**
      * @var string
      *
-     * @ORM\Column(name="zip", type="string", length=255, nullable=false)
+     * @ORM\Column(name="zip", type="string", length=255, nullable=true)
      */
     private $zip;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="public", type="boolean", nullable=false)
+     * @ORM\Column(name="public", type="boolean", nullable=true)
      */
     private $public = '0';
 
@@ -87,7 +87,7 @@ class Album
      *
      * @ORM\Column(name="country", type="string", length=2, nullable=true, options={"default"="FR"})
      */
-    private $country = '\'FR\'';
+    private $country = 'FR';
 
     /**
      * @var string|null
