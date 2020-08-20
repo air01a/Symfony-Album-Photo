@@ -17,49 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 class AlbumController extends AbstractFOSRestController
 {
     /**
-     * @Rest\Put("/api/v1/albums/{id}/zip")
-     * @Rest\View
-
-     */
-    public function updateZipAction(Album $album,FileHelper $fileHelper)
-    {
-        $this->denyAccessUnlessGranted('edit', $album);
-        if ($fileHelper->hasToBeZipped($album->getPath()))
-            $result=$fileHelper->zip($album->getPath());
-
-        return $result;
-    }
-
-    /**
-     * @Rest\Put("/api/v1/albums/zip")
-     * @Rest\View
-
-     */
-    public function zipAll(FileHelper $fileHelper)
-    {
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
-            throw $this->createAccessDeniedException('GET OUT!');
-        $result=$fileHelper->zipAll();
-
-        return array('Result'=>'Ok');
-    }
-
-
-    /**
-     * @Rest\Get("/api/v1/albums/zip")
-     * @Rest\View
-     */
-    public function zipget(FileHelper $fileHelper)
-    {
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
-            throw $this->createAccessDeniedException('GET OUT!');
-        $result=$fileHelper->folderToZip();
-
-        return $result;
-    }
-
-
-    /**
      * @Rest\Post("/api/v1/albums")
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("album", converter="fos_rest.request_body")
@@ -178,6 +135,52 @@ class AlbumController extends AbstractFOSRestController
         $em->flush();
     }
 
+
+
+   /**
+     * @Rest\View(StatusCode = 200)
+     * @Rest\Get(
+     *     path = "/api/v1/albums/{id}/zip",
+     *     name = "app_album_download",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    
+    public function downloadAction(Album $album,FileHelper $fileHelper)
+    {
+        $this->denyAccessUnlessGranted('view', $album);
+
+        
+        $zip = $fileHelper->zip($album->getPath());
+
+        
+        $headers = array(
+            'Content-Type'     => 'application/zip',
+            'Content-Disposition' => 'inline; filename="photos'.strval($album->getId()).'.zip"');
+        return new Response($zip, 200, $headers);
+
+    }
+
+
+
+   /**
+     * @Rest\View(StatusCode = 200)
+     * @Rest\Get(
+     *     path = "/albums/{id}/zip",
+     *     name = "app_album_download_auth",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    
+    public function downloadActionNoJWT(Album $album,FileHelper $fileHelper)
+    {
+
+        return $this->downloadAction($album, $fileHelper);
+
+    }
+
+
+
     /**
      * @Rest\View(StatusCode = 200)
      * @Rest\Put(
@@ -203,7 +206,6 @@ class AlbumController extends AbstractFOSRestController
         $album->setYoutube($newAlbum->getYoutube());
         $album->setVideo($newAlbum->getVideo());
         $album->setPublic($newAlbum->getPublic());
-        $album->setZip($newAlbum->getZip());
         $album->setIdPub($newAlbum->getIdPub());
         $this->getDoctrine()->getManager()->flush();
         return $album;

@@ -35,7 +35,7 @@ class User implements UserInterface, \Serializable
      *
      * @ORM\Column(name="roles", type="text", length=0, nullable=false)
      */
-    private $roles;
+    private $roles='["ROLE_USER"]';
 
     /**
      * @var string
@@ -100,6 +100,12 @@ class User implements UserInterface, \Serializable
     public function getPassword()
     {
         return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+
+        $this->password=$password;
     }
 
     public function getRoles()

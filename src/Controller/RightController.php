@@ -6,6 +6,7 @@ use App\Entity\Album;
 use App\Entity\Right;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Symfony\Component\HttpFoundation\Request;
 
 
 class RightController extends AbstractFOSRestController

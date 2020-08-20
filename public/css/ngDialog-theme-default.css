@@ -194,3 +194,7 @@
   background: #e0e0e0;
   color: #777;
 }
+.ngdialog.ngdialog-theme-default .ngdialog-button.ngdialog-button-warning {
+  background: #FF4000;
+  color: #FFFFFF;
+}

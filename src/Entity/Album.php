@@ -59,14 +59,7 @@ class Album
      */
     private $rights;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="zip", type="string", length=255, nullable=true)
-     * @exclude
 
-     */
-    private $zip;
 
     /**
      * @var bool
@@ -185,14 +178,6 @@ class Album
     } 
 
 
-    public function getZip() {
-        return $this->zip;
-    } 
-
-
-    public function setZip($zip) {
-        $this->zip = $zip;
-    } 
 
     public function setParameters($params) {
         foreach ($params as $k => $p) {

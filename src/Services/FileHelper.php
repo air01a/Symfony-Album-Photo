@@ -51,15 +51,30 @@ class FileHelper
         return $destination;
     }
 
-    public function storeFile(Album $album, Photos $photo, $uploadedFile){
+    private function isImage($uploadedFile){
+        return true;
+        if(@is_array(getimagesize($uploadedFile[0]->getPath().'/'.$uploadedFile[0]->getFileName()))){
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public function storeImage(Album $album, Photos $photo, $uploadedFile){
         $directory=$this->appPath.'/'.$album->getPath();
         $photo->setPath($uploadedFile[0]->getClientOriginalName());
+        //if (!$this->isImage($uploadedFile))
+          //  return -3;
         try {
             $file = $uploadedFile[0]->move($directory.'/800/', $photo->getPath());
             $this->compress($directory.'/800/'.$photo->getPath(),$directory.'/320/'.$photo->getPath(),75);
         } catch(\Exception $e) {
+            var_dump($e->getMessage());
             $photo->setPath(null);
+            return -1;
         }
+        return 1;
     }
 
     public function getRandomDirectory() {
@@ -198,7 +213,8 @@ class FileHelper
         }
         
         $zip->close();
-        return $this->deleteZipTask($path);
+        return file_get_contents($archive);
+       // return $this->deleteZipTask($path);
 
     }
 

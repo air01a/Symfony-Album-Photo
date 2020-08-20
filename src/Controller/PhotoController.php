@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Album;
 use App\Entity\Photos;
 use App\Services\FileHelper;
+use App\Services\ErrorHelper;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,7 +58,7 @@ class PhotoController extends AbstractFOSRestController
      * @ParamConverter("photo", options={"id" = "idPhoto"})
      * @Rest\View
      */
-    public function uploadAction(Album $album, Photos $photo, FileHelper $fileHelper,Request $request)
+    public function uploadAction(Album $album, Photos $photo, FileHelper $fileHelper,Request $request,ErrorHelper $errorManager)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 
@@ -68,13 +69,13 @@ class PhotoController extends AbstractFOSRestController
         $em = $this->getDoctrine()->getManager();
 
 
-        $fileHelper->storeFile($album, $photo, $uploadedFile->get('file'));
+        $error=$fileHelper->storeImage($album, $photo, $uploadedFile->get('file'));
+        $errorManager->manageError($error);
         if ($photo->getPath()==null)
             $em->remove($photo);
         else     
             $em->persist($photo);
         $em->flush();
-        $fileHelper->addZipTask($album->getPath());
         return $photo;
     }
     

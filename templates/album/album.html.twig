@@ -51,8 +51,40 @@
     <div ng-repeat="(key,value) in upload" class="photos_wrapper">
 		<div class="text-color: blue">{{ key }}</div><div class="text-color: green;">{{ value }}</div><BR />
 	</div>
-
 </script>
+
+<script type="text/ng-template" id="userselection">
+  <div style="overflow : scroll;height: 400px;">
+  <h1><b>User List</b></h1><br /><hr />
+  <span id="usercontent" ng-repeat="user in users"><a href="#" ng-click="editOneUser(user.id)">{{user.username}} </a><br /></span>
+  </div>
+<button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="editOneUser(-1);">Create User</button>
+</script>
+
+<script type="text/ng-template" id="useredit">
+  <div style="overflow : scroll;height: 400px;">
+  <h1><b>User Edition</b></h1><br /><hr />
+		<span>User : </span><input type="text" ng-model="editUser.username"><br />
+		<span>Password : </span>
+		<input type="password" ng-model="editUser.password"><br/><br/>
+		<span>isAdmin : </span><input type="checkbox" ng-model="editUser.isAdmin" >
+	<div class="ngdialog-buttons"> </div>
+	<div class="ngdialog-buttons">
+			<button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="modifyUser()">Modify</button>
+			<button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog()">Close</button>
+		</div>
+		  </div>
+
+		<button type="button" class="ngdialog-button ngdialog-button-warning" ng-click="deleteUser()">Delete</button>
+</script>
+
+
+<script type="text/ng-template" id="uploadid">
+    <div ng-repeat="(key,value) in upload" class="photos_wrapper">
+		<div class="text-color: blue">{{ key }}</div><div class="text-color: green;">{{ value }}</div><BR />
+	</div>
+</script>
+
 
 <script type="text/ng-template" id="deleteAlbum">
     <h1>Delete Album</h1>
@@ -92,8 +124,8 @@ class AuthImg extends HTMLImageElement {
 		<h3>
 			 <span class="col1">Admin</span>
 		</h3>
-		<div ng-show="albumToZip"><button type="button" class="defaultbutton red"  ng-click="doZip()">Update ZIP</button></div>
-	<div><button type="button" class="defaultbutton green" ng-click="createAlbum()">Create Album<br /></button></div>
+		
+	<div><button type="button" class="defaultbutton blue" ng-click="manageUser()">Manage User<br /></button><button type="button" class="defaultbutton green" ng-click="createAlbum()">Create Album<br /></button></div>
     {% else %}
 		<h3>
 			 <span class="col1">Nos Photos</span>
@@ -190,7 +222,6 @@ $(document).ready(function() {
 		<br /><br /> 
 		 
 	<div class="center">
-	<div ng-show="album.has_to_be_zipped"><button type="button" class="defaultbutton red"  ng-click="doZip(album.id)">Update ZIP</button></div><br /> 
     <div id="drop_file_zone" ondrop="angular.element(this).scope().upload_file(event)" ondragover="return false">
         <div id="drag_upload_file">
             <p>Drop file(s) here</p>
@@ -228,7 +259,7 @@ $(document).ready(function() {
 
 {% verbatim %}
 	</p>
-		<a href="/api/v1/albums/{{album.id}}/"><img class="img_inner fleft" src="/images/zip.png" height="40px" id="zipimg"></a>
+		<a href="/albums/{{album.id}}/zip"><img class="img_inner fleft" src="/images/zip.png" height="40px" id="zipimg"></a>
 		<a href ng-click="diaporama()"><img class="img_innet fleft" src="/images/play_file.png"  height="40px" id="diap">
 		<a href ng-click="showVideo()"><img class="img_inner fleft" src="/images/video_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a>
 		<a href ng-click="goToVideo()"><img class="img_inner fleft" src="/images/video_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a>

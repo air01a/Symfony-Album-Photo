@@ -299,7 +299,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			console.log($scope.album);
 			if ((action==1) && ($scope.album.id_pub==undefined || $scope.album.id_pub==""))
 				$scope.album.id_pub = makeRandomString(20);
-			$http.patch("/api/v1/albums/"+$scope.album.id,JSON.stringify({'public':action,'id_pub':$scope.album.id_pub}))
+			$http.patch("/api/v1/albums/"+$scope.album.id,JSON.stringify({'public':action,'idPub':$scope.album.id_pub}))
 				.then(function(res) {	
 					$scope.album=res.data;
 				});
@@ -373,9 +373,15 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		//* Upload photos 
 		//* 
 		//************************************************************************
-		$scope.uploadOneFile=function (file,album) {
+		$scope.uploadOneFile=function (file_obj,album, start,end) {
+			console.log("Thread start="+start+",end="+end+",In progress="+$scope.uploadInProgress);
+			if(start>end)
+				return;
 			$http.post('/api/v1/albums/'+album+'/photos',{'album_id':album})
 						.then(function(res) {
+							file = file_obj[start];
+							console.log(file);
+							$scope.uploadInProgress++;
 							$scope.upload[file.name]='Downloading';
 							photo=res.data;
 							form_data = new FormData();
@@ -387,35 +393,44 @@ angular.module('delr1', ['angular.img','ngDialog'])
 							})
 								.then(function (res){
 									$scope.upload[file.name]='Downloaded';
-									$scope.uploadInProgres--;
+									$scope.uploadInProgress--;
+									$scope.uploadOneFile(file_obj,album,start+1,end);
 									if($scope.uploadInProgres==0)
 										$scope.actShowPhoto(album);
+									
 								}, function (res) {
 									$scope.upload[file.name]='Error';
-									$scope.uploadInProgres--;
+									$scope.uploadInProgress--;
+									$scope.uploadOneFile(file_obj,album,start+1,end);
 									if($scope.uploadInProgres==0)
 										$scope.actShowPhoto(album);
 								}
-								
 								);
 						});
 
 		};
 
 
+
 		$scope.manageFileUpload = function(file_obj) {
 			if(file_obj != undefined) {
 				album = $scope.album.id;
 				ngDialog.open({ template: 'uploadid',className: 'ngdialog-theme-default',scope:$scope });
-				$scope.uploadInProgres=0;
+				$scope.uploadInProgress=0;
 				$scope.upload={};
-				for(i=0; i<file_obj.length; i++) {
-					console.log(file_obj[i]);
-					$scope.upload[file_obj[i].name]='waiting';
-					$scope.uploadInProgres++;
-					$scope.uploadOneFile(file_obj[i],album) 
+				$scope.lockupload=1;
 				
+				for(i=0; i<file_obj.length; i++)
+					$scope.upload[file_obj[i].name]='waiting';
+				
+				step=Math.ceil(file_obj.length/5);// 5 upload in parallel max
+				i=0;
+				while(i<file_obj.length) {
+					$scope.uploadOneFile(file_obj,album,i,i+step-1);
+					i=i+step;
 				}
+				
+				
 				$('#selectfile').val('');
 			}
 		};
@@ -444,6 +459,70 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 		};
 
+		//************************************************************************
+		//* User Management
+		//* 
+		//************************************************************************
+		
+
+		// API Request to modify existing user
+		$scope.modifyUser=function() {
+			req = {'username':$scope.editUser.username,'isAdmin':$scope.editUser.isAdmin};
+			if ($scope.editUser.password!=""){
+				req['password']=$scope.editUser.password;
+			}
+			$http.patch('/api/v1/users/'+$scope.editUser.id,req)
+				.then(function(res) {
+					$scope.dialogid.close();
+					$scope.manageUser();
+				},
+				function(res){
+					alert("Error updating user :(")
+				});
+		}
+
+		// Load user information in form and display form
+		$scope.editOneUser=function(id=-1) {
+			$scope.dialogid.close();
+			if (id==-1){ // if user creation
+				$http.post('/api/v1/users',{'username':'temp'})
+				  .then(function(res){
+					user = res.data;
+					$scope.editOneUser(user.id);
+				  });
+			} else { // request information about user
+				$http.get('/api/v1/users/'+id)
+								.then(function(res){
+									$scope.editUser = res.data;
+									$scope.editUser.isAdmin=false;
+									JSON.parse($scope.editUser.roles).forEach(element => {
+										if(element=='ROLE_ADMIN')
+											$scope.editUser.isAdmin=true;
+									});
+									$scope.dialogid.close();
+									$scope.dialogid=ngDialog.open({ template: 'useredit',className: 'ngdialog-theme-default',scope:$scope });
+								});
+			}
+
+		}
+
+		$scope.deleteUser = function() {
+			$http.delete('/api/v1/users/'+$scope.editUser.id) 
+				.then(function(res){
+					$scope.dialogid.close();
+					$scope.manageUser();
+				});
+
+		}
+		// Open user management window
+		$scope.manageUser = function() {
+			$http.get('/api/v1/users')
+							.then(function(res){
+								$scope.users = res.data;
+								$scope.dialogid=ngDialog.open({ template: 'userselection',className: 'ngdialog-theme-default',scope:$scope });
+							});
+
+		}
 		//************************************************************************
 		//* Click on button save 
 		//* 
@@ -664,19 +743,10 @@ angular.module('delr1', ['angular.img','ngDialog'])
 					} else {
 						$page='';
 					}
-					if(admin) {
-						$page+='&admin=1';
-						$http.get('/api/v1/albums/zip')
-							.then(function(res) {
-								console.log(res.data);
-								if (res.data.length>0)
-									$scope.albumToZip=true;
-								else
-									$scope.albumToZip=false;
 
-							});
+					if (admin)
+						$page+="&admin=1";
 
-					}
 	                $http.get('/api/v1/albums?num_start='+$scope.startGal+$page+'&keyword='+$scope.filter)
         	                .then(function(res){
 								$scope.albums = res.data.data;
@@ -729,20 +799,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$scope.displayGal();
 		}
 
-		$scope.doZip = function(id=-1) {
-			if (id==-1)
-				url='/api/v1/albums/zip';
-			else
-				url='/api/v1/albums/'+id+'/zip';
-			$http.put(url)
-				.then (function(res){
-					if (id==-1)
-						$scope.albumToZip=false;
-					else
-						$scope.album.has_to_be_zipped=false;
-				});
 
-		};
 
 
 		//************************************************************************
@@ -783,7 +840,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.baseUrl=baseURL;
 		$scope.countryMapping = countryMapping;
 		$scope.token=token;
-		$scope.albumToZip=false;
 		if (idgal) {
             $scope.showphoto=true;
 			$scope.hash=hashgal;
