@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
+
 class TokenCacher
 {
     private $JWTManager;
@@ -28,7 +29,7 @@ class TokenCacher
             } catch (JWTDecodeFailureException $e) {
                 $data=null;
             }
-            if (($data!=null)&&($data["exp"]>time()))
+            if (($data!=null)&&($data["exp"]>(20*60+time())))
                 return $this->session->get('jwt');
         }
         $token=$this->JWTManager->create($user);

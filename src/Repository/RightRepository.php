@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Repository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\EntityRepository;
 
 class RightRepository extends EntityRepository
@@ -26,10 +25,6 @@ class RightRepository extends EntityRepository
     }
     public function add($idAlbum,$idUser) {
         $qb = $this->_em->createQuery('INSERT INTO App:Right r where r.album = ?1');
-        
-        $qb->setParameter(1,$id);
-
+        $qb->setParameter(1,$idUser);
     }
-
-
 }

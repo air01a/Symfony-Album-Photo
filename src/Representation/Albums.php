@@ -16,6 +16,7 @@ class Albums
 
     public function __construct(Pagerfanta $data)
     {
+
         $this->data = $data->getCurrentPageResults();
 
         $this->addMeta('limit', $data->getMaxPerPage());
@@ -23,10 +24,12 @@ class Albums
         $this->addMeta('total_items', $data->getNbResults());
         $this->addMeta('index', $data->getCurrentPageOffsetStart());
         $this->addMeta('total_pages', $data->getNbPages());
+        
         if ($data->hasNextPage()) {
             $page = array("page"=>$data->getNextPage(),"limit"=>$data->getMaxPerPage());
             $nextPage=base64_encode(json_encode($page));
             $this->addMeta('next_page',$nextPage);
+
         }
         if ($data->hasPreviousPage()) {
             $page = array("page"=>$data->getPreviousPage(),"limit"=>$data->getMaxPerPage());
@@ -38,7 +41,9 @@ class Albums
 
     public function addMeta($name, $value)
     {
+
         if (isset($this->meta[$name])) {
+
             throw new \LogicException(sprintf('This meta already exists. You are trying to override this meta, use the setMeta method instead for the %s meta.', $name));
         }
 
@@ -47,7 +52,9 @@ class Albums
 
     public function setMeta($name, $value)
     {
+
         $this->meta[$name] = $value;
+
     }
     
 

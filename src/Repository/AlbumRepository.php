@@ -5,19 +5,19 @@ use Doctrine\ORM\Query;
 
 class AlbumRepository extends AbstractRepository
 {
-    public function search($term, $order = 'desc', $limit = 20, $page = 0, int $userId)
+    public function search($term, $order = 'desc', $limit = 20, $page = 0, int $userId, int $admin=0)
     {
         
         $qb = $this->_em->createQueryBuilder()
                          ->select('a')
                          ->from('App:Album', 'a')
                          ->join('a.rights','r');
-
-        $qb
+        if (!$admin) {
+            $qb
                          ->where('r.user = ?1')
                          ->setParameter(1,$userId)
                         ;
-
+        }
 
         if ($term) {
             $qb

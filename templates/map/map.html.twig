@@ -52,7 +52,7 @@ function displayInfo(code) {
 }
 
 function showCountry(code) {
-        if (countryMap[code]!=1)
+        if (countryMap[code]==0)
                 return 0;
 
 	$( "#dialog").html("<b>Cliquez pour acc&egrave;der a la galerie :</b><br /><br />")
@@ -79,7 +79,7 @@ $(document).ready(function() {
       countryMap=data;
       for (var prop in countryMap) {
         if (countryMap.hasOwnProperty(prop)) {
-                if (countryMap[prop]==1){
+                if (countryMap[prop]!=0){
                         countryList.push(prop);
                         countryListColor[prop]='#CC0000';
                 } else

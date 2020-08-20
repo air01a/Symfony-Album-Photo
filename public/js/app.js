@@ -261,11 +261,28 @@ function makeRandomString(length) {
 
 angular.module('delr1', ['angular.img','ngDialog'])
 	.controller('GalleryCtrl', function($scope,$rootScope,$http,$timeout,ngDialog) {
-		if (token!=""){
-			//console.log("xauth " + token)
-			$http.defaults.headers.common = { 'Authorization' : 'Bearer '+token };
+		//10 seconds delay
+		$scope.timeout=function() {
+			$timeout( function(){
+			console.log("time to get new token");
+				$http.get("/api/v1/getToken")
+					.then(function(res){
+						console.log(res);
+						token=res.data.token;
+						console.log(token);
+						$http.defaults.headers.common = { 'Authorization' : 'Bearer '+token };
+						$scope.timeout();
+					});	
+				
+			}, 1200000 );
+		};
+		$scope.timeout();
+
+		if (token!="")
+		{			$http.defaults.headers.common = { 'Authorization' : 'Bearer '+token };
 
 		}
+
 		$scope.alert=function(msg) {
 			alert(msg);
 		}
@@ -303,6 +320,29 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.deleteAlbum = function(validation) {
 			if (validation!="OK")
 				$scope.deleteDialog=ngDialog.open({ template: 'deleteAlbum',className: 'ngdialog-theme-default',scope:$scope });
+			else {
+				$scope.deleteDialog.close();
+				console.log("DeleteALbum");
+				$http.delete("/api/v1/albums/"+$scope.album.id)
+					.then(function(res){
+
+						$scope.displayGal();
+					});
+
+			}
+		}
+
+		//************************************************************************
+		//* delete
+		//* 
+		//************************************************************************
+		$scope.deletePhoto = function (index) {
+			$http.delete("/api/v1/albums/"+$scope.album.id+"/photos/"+$scope.photos[index].id)
+				.then(function(res) {
+					$scope.actShowPhoto($scope.album.id);
+					ngDialog.close($scope.dialogid);
+
+				});
 		}
 
 		//************************************************************************
@@ -325,7 +365,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 				.then(function(res) {
 					$scope.photos[index]=res.data;
 					ngDialog.close($scope.dialogid);
-
 				});
 		}
 
@@ -617,27 +656,40 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		//* 
 		//************************************************************************
 		$scope.displayGal = function(){
+			$scope.showphoto=false;
 			console.log("start gal "+$scope.startGal)
-		//	$("#polaroid").width(Math.floor($("#polaroid").width() / 260)*260);
+					//	$("#polaroid").width(Math.floor($("#polaroid").width() / 260)*260);
 					if ($scope.startGal!=0) {
 						$page="&page="+btoa(JSON.stringify({"page":$scope.startGal+1,"limit":$scope.galLimit}));
 					} else {
 						$page='';
 					}
+					if(admin) {
+						$page+='&admin=1';
+						$http.get('/api/v1/albums/zip')
+							.then(function(res) {
+								console.log(res.data);
+								if (res.data.length>0)
+									$scope.albumToZip=true;
+								else
+									$scope.albumToZip=false;
+
+							});
+
+					}
 	                $http.get('/api/v1/albums?num_start='+$scope.startGal+$page+'&keyword='+$scope.filter)
         	                .then(function(res){
-                	        $scope.albums = res.data.data;
-							$scope.numAlbums    = res.data.meta.total_items;
-				$scope.link=[];
-				i=0;
-				
-				while(i*$scope.galLimit<$scope.numAlbums)
-				{	
-					$scope.link.push({indice:i,selected:(i==$scope.startGal)});
-					i+=1;
-				}
-				console.log($scope.link)
-                });
+								$scope.albums = res.data.data;
+								$scope.numAlbums = res.data.meta.total_items;
+								$scope.link=[];
+								i=0;
+								
+								while(i*$scope.galLimit<$scope.numAlbums)
+								{	
+									$scope.link.push({indice:i,selected:(i==$scope.startGal)});
+									i+=1;
+								}			
+			                });
 
 		}
 
@@ -677,6 +729,20 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$scope.displayGal();
 		}
 
+		$scope.doZip = function(id=-1) {
+			if (id==-1)
+				url='/api/v1/albums/zip';
+			else
+				url='/api/v1/albums/'+id+'/zip';
+			$http.put(url)
+				.then (function(res){
+					if (id==-1)
+						$scope.albumToZip=false;
+					else
+						$scope.album.has_to_be_zipped=false;
+				});
+
+		};
 
 
 		//************************************************************************
@@ -717,6 +783,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.baseUrl=baseURL;
 		$scope.countryMapping = countryMapping;
 		$scope.token=token;
+		$scope.albumToZip=false;
 		if (idgal) {
             $scope.showphoto=true;
 			$scope.hash=hashgal;

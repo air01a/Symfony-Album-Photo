@@ -1,9 +1,7 @@
 <?php
 
 namespace App\Repository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\EntityRepository;
-use App\Service\FileHelper;
 
 class PhotoRepository extends EntityRepository
 {

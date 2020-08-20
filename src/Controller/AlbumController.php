@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use App\Entity\Album;
 use App\Entity\Right;
-use App\Service\FileHelper;
+use App\Services\FileHelper;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -17,11 +17,54 @@ use Symfony\Component\HttpFoundation\Response;
 class AlbumController extends AbstractFOSRestController
 {
     /**
-     * @Rest\Post("/api/v1/albums")
+     * @Rest\Put("/api/v1/albums/{id}/zip")
      * @Rest\View
+
+     */
+    public function updateZipAction(Album $album,FileHelper $fileHelper)
+    {
+        $this->denyAccessUnlessGranted('edit', $album);
+        if ($fileHelper->hasToBeZipped($album->getPath()))
+            $result=$fileHelper->zip($album->getPath());
+
+        return $result;
+    }
+
+    /**
+     * @Rest\Put("/api/v1/albums/zip")
+     * @Rest\View
+
+     */
+    public function zipAll(FileHelper $fileHelper)
+    {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+            throw $this->createAccessDeniedException('GET OUT!');
+        $result=$fileHelper->zipAll();
+
+        return array('Result'=>'Ok');
+    }
+
+
+    /**
+     * @Rest\Get("/api/v1/albums/zip")
+     * @Rest\View
+     */
+    public function zipget(FileHelper $fileHelper)
+    {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+            throw $this->createAccessDeniedException('GET OUT!');
+        $result=$fileHelper->folderToZip();
+
+        return $result;
+    }
+
+
+    /**
+     * @Rest\Post("/api/v1/albums")
+     * @Rest\View(StatusCode = 201)
      * @ParamConverter("album", converter="fos_rest.request_body")
      */
-    public function createAction(Album $album, ConstraintViolationList $violations)
+    public function createAction(Album $album, FileHelper $fileHelper, ConstraintViolationList $violations)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 
@@ -34,7 +77,6 @@ class AlbumController extends AbstractFOSRestController
         $right->setUser($this->getUser());
         $right->setAlbum($album);
 
-        $fileHelper = new FileHelper();
         $album->setPath($fileHelper->getRandomDirectory());
         $fileHelper->prepareDirectory($album->getPath());
         $em->persist($album);
@@ -72,19 +114,27 @@ class AlbumController extends AbstractFOSRestController
      *     default="",
      *     description="The pagination offset"
      * ) 
+     * @Rest\QueryParam(
+     *     name="admin",
+     *     requirements="\d",
+     *     default=0,
+     *     description="do not check for right"
+     * ) 
      */
     public function listAction(ParamFetcherInterface $paramFetcher){
         $user = $this->getUser();
+
         $pager = $this->getDoctrine()->getRepository('App:Album')->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('page'),
-            $user->getId()
+            $user->getId(),
+            $paramFetcher->get('admin')
         );
-        
 
-        return new Albums($pager);
+        $albums = new Albums($pager);
+        return $albums;
 
     }
     
@@ -94,10 +144,10 @@ class AlbumController extends AbstractFOSRestController
      *     requirements = {"id"="\d+"}
      * @Rest\View
      */
-    public function getAction(Album $album)
+    public function getAction(Album $album,FileHelper $fileHelper)
     {
         $this->denyAccessUnlessGranted('view', $album);
-
+        $album->hasToBeZipped=$fileHelper->hasToBeZipped($album->getPath());
         return $album;
     }
 
@@ -107,7 +157,7 @@ class AlbumController extends AbstractFOSRestController
      *     requirements = {"id"="\d+"}
      * @Rest\View
      */
-    public function deleteAction(Album $album)
+    public function deleteAction(Album $album,FileHelper $fileHelper)
     {
         $this->denyAccessUnlessGranted('edit', $album);
         $em=$this->getDoctrine()->getManager();
@@ -120,9 +170,9 @@ class AlbumController extends AbstractFOSRestController
         foreach($album->getRights() as $right)
             $em->remove($right);
 
-        $fileHelper = new FileHelper();
+
         if (strlen($album->getPath())>5)
-            if ($fileHelper->deleteDir($album->getPath())) 
+            if (!$fileHelper->deleteDir($album->getPath())) 
                 return 'error="deleting file"';
         $em->remove($album);
         $em->flush();
@@ -143,14 +193,13 @@ class AlbumController extends AbstractFOSRestController
         $this->denyAccessUnlessGranted('edit', $album);
 
         if (count($violations)) {
-            return $this->view($errors, Response::HTTP_BAD_REQUEST);
+            return $this->view($violations, Response::HTTP_BAD_REQUEST);
         }
 
         $album->setCommentaire($newAlbum->getCommentaire());
         $album->setCountry($newAlbum->getCountry());
         $album->setDate($newAlbum->getDate());
         $album->setName($newAlbum->getName());
-        $album->setPath($newAlbum->getPath());
         $album->setYoutube($newAlbum->getYoutube());
         $album->setVideo($newAlbum->getVideo());
         $album->setPublic($newAlbum->getPublic());

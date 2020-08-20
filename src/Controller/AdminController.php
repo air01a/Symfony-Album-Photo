@@ -23,6 +23,7 @@ class AdminController extends AbstractController
        // if (!$this->getUser()->isGranted('ROLE_ADMIN'))
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
             throw $this->createAccessDeniedException('GET OUT!');
+            
         $id_album=$request->query->get('id_album');
         if ($id_album==NULL)
             $id_album='false';

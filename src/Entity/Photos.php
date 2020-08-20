@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Inflector\Inflector;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Photos
@@ -11,7 +11,6 @@ use Doctrine\Common\Inflector\Inflector;
  * @ORM\Table(name="photos", indexes={@ORM\Index(name="album_id", columns={"album_id"})})
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="App\Repository\PhotoRepository")
-
  */
 class Photos
 {
@@ -27,9 +26,10 @@ class Photos
     /**
      * @var string
      *
-     * @ORM\Column(name="path", type="string", length=255, nullable=false, options={"default"="''"})
+     * @ORM\Column(name="path", type="string", length=255, nullable=true)
+     * @exclude
      */
-    private $path = '';
+    private $path;
 
     /**
      * @var int
@@ -77,7 +77,8 @@ class Photos
     public function setParameters($params) {
         foreach ($params as $k => $p) {
             if (!is_null($p)) { // here is the if statement
-                $key = Inflector::camelize($k);
+                //$key = Inflector::camelize($k);
+                $key = $k;
                 if (property_exists($this, $key)) {
                     $this->{'set' . ucfirst($key)}($p);
                 }

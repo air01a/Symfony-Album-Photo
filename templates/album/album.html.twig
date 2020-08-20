@@ -32,6 +32,9 @@
 <script type="text/ng-template" id="modalid">
     <h1>Insert comment</h1>
     <p><input type="text" ng-model="currentcomment" id="inputcomment" autofocus ></p>
+	<div style="float: left">
+	<button type="button" class="ngdialog-button red" ng-click="deletePhoto(currentcommentindex)">Delete</button>
+	</div>
 <div class="ngdialog-buttons">
 			<button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="updateComment(currentcommentindex,currentcomment)">Save</button>
 			<button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog()">Close</button>
@@ -89,6 +92,7 @@ class AuthImg extends HTMLImageElement {
 		<h3>
 			 <span class="col1">Admin</span>
 		</h3>
+		<div ng-show="albumToZip"><button type="button" class="defaultbutton red"  ng-click="doZip()">Update ZIP</button></div>
 	<div><button type="button" class="defaultbutton green" ng-click="createAlbum()">Create Album<br /></button></div>
     {% else %}
 		<h3>
@@ -183,9 +187,10 @@ $(document).ready(function() {
                 </div><br />
 
 			<button type="button" class="defaultbutton blue"  ng-click="saveInfo()">Enregistrer</button><img src="/images/validate.png" width="20px" ng-show="inprogress==2">
-		<br />
+		<br /><br /> 
 		 
-	<div class="center">&nbsp;
+	<div class="center">
+	<div ng-show="album.has_to_be_zipped"><button type="button" class="defaultbutton red"  ng-click="doZip(album.id)">Update ZIP</button></div><br /> 
     <div id="drop_file_zone" ondrop="angular.element(this).scope().upload_file(event)" ondragover="return false">
         <div id="drag_upload_file">
             <p>Drop file(s) here</p>

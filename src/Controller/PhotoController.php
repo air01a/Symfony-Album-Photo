@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Album;
 use App\Entity\Photos;
-use App\Service\FileHelper;
+use App\Services\FileHelper;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ class PhotoController extends AbstractFOSRestController
 {
     /**
      * @Rest\Post("/api/v1/albums/{id}/photos")
-     * @Rest\View
+     * @Rest\View(StatusCode = 201)
      * @ParamConverter("photo", converter="fos_rest.request_body")
      */
     public function createAction(Album $album, Photos $photo, ConstraintViolationList $violations)
@@ -26,7 +26,7 @@ class PhotoController extends AbstractFOSRestController
         $this->denyAccessUnlessGranted('edit', $album);
 
         if (count($violations)) {
-            return $this->view("", Response::HTTP_BAD_REQUEST);
+            return $this->view($violations, Response::HTTP_BAD_REQUEST);
         }
 
         $em = $this->getDoctrine()->getManager();
@@ -38,12 +38,26 @@ class PhotoController extends AbstractFOSRestController
     }
 
     /**
+     * @Rest\Delete("/api/v1/albums/{id}/photos/{idPhoto}")
+     * requirements = {"id"="\d+", "idPhoto"="\d+"}
+     * @ParamConverter("photo", options={"id" = "idPhoto"})
+     * @Rest\View
+     */
+    public function deleteAction(Album $album, Photos $photo, FileHelper $fileHelper)
+    {   
+        $fileHelper->deletePhoto($album,$photo);
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($photo);
+        $em->flush();
+    }
+
+    /**
      * @Rest\Post("/api/v1/albums/{id}/photos/{idPhoto}")
      * requirements = {"id"="\d+", "idPhoto"="\d+"}
      * @ParamConverter("photo", options={"id" = "idPhoto"})
      * @Rest\View
      */
-    public function uploadAction(Album $album, Photos $photo, Request $request)
+    public function uploadAction(Album $album, Photos $photo, FileHelper $fileHelper,Request $request)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 
@@ -52,7 +66,7 @@ class PhotoController extends AbstractFOSRestController
             return false;
         }
         $em = $this->getDoctrine()->getManager();
-        $fileHelper = new FileHelper();
+
 
         $fileHelper->storeFile($album, $photo, $uploadedFile->get('file'));
         if ($photo->getPath()==null)
@@ -60,7 +74,7 @@ class PhotoController extends AbstractFOSRestController
         else     
             $em->persist($photo);
         $em->flush();
-
+        $fileHelper->addZipTask($album->getPath());
         return $photo;
     }
     
@@ -69,12 +83,12 @@ class PhotoController extends AbstractFOSRestController
      * requirements = {"id"="\d+"}
      * @Rest\View
      */
-    public function downloadRandomAction(Album $album)
+    public function downloadRandomAction(Album $album,FileHelper $fileHelper)
     {
         $this->denyAccessUnlessGranted('view', $album);
 
         $photo = $this->getDoctrine()->getRepository('App:Photos')->getRandomPhoto($album->getId());
-        return $this->downloadActionHelper($album,$photo,1);
+        return $this->downloadActionHelper($album,$photo,1,$fileHelper);
     }
     /**
      * @Rest\View(StatusCode = 200)
@@ -112,7 +126,7 @@ class PhotoController extends AbstractFOSRestController
      * downloadAction but without query parameters to be called internally
      */
 
-    public function downloadActionHelper(Album $album, Photos $photo,int $thumb)
+    public function downloadActionHelper(Album $album, Photos $photo,int $thumb,FileHelper $fileHelper)
     {
         $this->denyAccessUnlessGranted('view', $album);
 
@@ -121,7 +135,6 @@ class PhotoController extends AbstractFOSRestController
             return $this->view("Album and photo mismatch", Response::HTTP_BAD_REQUEST);
         }
 
-        $fileHelper = new FileHelper();
         $image = $fileHelper->getPhotoFile($album,$photo,$thumb);
         
         $headers = array(
@@ -144,9 +157,9 @@ class PhotoController extends AbstractFOSRestController
      * )
 
      */
-    public function downloadAction(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher)
+    public function downloadAction(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher,FileHelper $fileHelper)
     {
-        return $this->downloadActionHelper($album,$photo,$paramFetcher->get('thumb'));
+        return $this->downloadActionHelper($album,$photo,$paramFetcher->get('thumb'),$fileHelper);
     }
 
          /**
@@ -171,14 +184,14 @@ class PhotoController extends AbstractFOSRestController
      * 
 
      */
-    public function downloadbyhashAction(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher)
+    public function downloadbyhashAction(Album $album, Photos $photo,FileHelper $fileHelper,ParamFetcherInterface $paramFetcher)
     {
         $token = $paramFetcher->get('token');
         if ($token!=null)
         {
             $this->getUser()->setApiKey($token);
         }
-        return $this->downloadActionHelper($album,$photo,$paramFetcher->get('thumb'));
+        return $this->downloadActionHelper($album,$photo,$paramFetcher->get('thumb'),$fileHelper);
     }
 
     /**

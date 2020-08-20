@@ -5,12 +5,7 @@ namespace App\Controller;
 use App\Entity\Album;
 use App\Entity\Right;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use Symfony\Component\HttpFoundation\Response;
-use FOS\RestBundle\Request\ParamFetcherInterface;
 
 
 class RightController extends AbstractFOSRestController

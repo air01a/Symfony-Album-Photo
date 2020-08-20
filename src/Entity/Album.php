@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Entity;
-use Doctrine\Common\Inflector\Inflector;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Exclude;
@@ -30,7 +29,7 @@ class Album
      *
      * @ORM\Column(name="date", type="date", nullable=false, options={"default"="0000-00-00"})
      */
-    private $date = '\'0000-00-00\'';
+    private $date = '0000-00-00';
 
     /**
      * @var string
@@ -43,9 +42,9 @@ class Album
     /**
      * @var string
      *
-     * @ORM\Column(name="path", type="string", length=255, nullable=false, options={"default"=""})
+     * @ORM\Column(name="path", type="string", length=255, nullable=true)
      */
-    private $path = '\'\'';
+    private $path;
 
     /**
      * @var string
@@ -64,6 +63,8 @@ class Album
      * @var string
      *
      * @ORM\Column(name="zip", type="string", length=255, nullable=true)
+     * @exclude
+
      */
     private $zip;
 
@@ -78,6 +79,7 @@ class Album
      * @var string|null
      *
      * @ORM\Column(name="id_pub", type="string", length=64, nullable=true)
+     * 
      */
     private $idPub = '';
 
@@ -95,6 +97,8 @@ class Album
      * @ORM\Column(name="youtube", type="text", length=65535, nullable=true, options={"default"=""})
      */
     private $youtube = '';
+
+    public $hasToBeZipped=false;
 
     public function getId() {
         return $this->id;
@@ -193,8 +197,9 @@ class Album
     public function setParameters($params) {
         foreach ($params as $k => $p) {
             if (!is_null($p)) { // here is the if statement
-                $key = Inflector::camelize($k);
-                
+              
+            //    $key = Inflector::camelize($k);
+                $key = $k;
                 if (property_exists($this, $key)) {
                     $this->{'set' . ucfirst($key)}($p);
                 }

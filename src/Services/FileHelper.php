@@ -1,10 +1,9 @@
 <?php
-namespace App\Service;
+namespace App\Services;
 
 
 use App\Entity\Album;
 use App\Entity\Photos;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class FileHelper
 {
@@ -76,27 +75,139 @@ class FileHelper
         mkdir($this->appPath.'/'.$directory.'/800');
     }
 
+    private function deleteFiles($directory) {
+        $files = scandir($directory);
+        foreach($files as $file)
+            if (is_file($directory.'/'.$file))
+                unlink($directory.'/'.$file);
+    }
+
     public function deleteDir($directory) {
         try {
             $baseDir=$this->appPath.'/'.$directory;
-
-            $files = scandir($baseDir.'/800');
-            foreach($files as $file)
-                unlink($baseDir.'/800/'.$file);
-
-            $files = scandir($baseDir.'/320');
-            foreach($files as $file)
-                unlink($baseDir.'/320/'.$file);
-            
-            $files = scandir($baseDir.'/');
-            foreach($files as $file)
-                unlink($baseDir.'/'.$file);
+            $this->deleteFiles($baseDir.'/800');
+            $this->deleteFiles($baseDir.'/320');
+            $this->deleteFiles($baseDir.'/');
             rmdir($baseDir.'/320');
             rmdir($baseDir.'/800');
             rmdir($baseDir.'/');
             return true;
         } catch(\Exception $e) {
+            var_dump($e->getMessage());
             return false;
+        }
+    }
+
+    public function deletePhoto(Album $album,Photos $photo){
+        try {
+            $baseDir=$this->appPath.'/'.$album->getPath();
+            unlink($baseDir.'/320/'.$photo->getPath());
+            unlink($baseDir.'/800/'.$photo->getPath());
+            return true;
+        } catch (\Exception $e) {
+            var_dump($e->getMessage()); 
+            return false;
+        }
+    }
+
+
+
+    public function hasToBeZipped($path){
+        if (!is_file($this->appPath.'/zipperTask.json'))
+            return false;
+        
+        $file = file_get_contents($this->appPath.'/zipperTask.json');
+        $task = json_decode($file, true);
+        if (in_array($path,$task['toZip']))
+            return true;
+        return false;
+    }
+
+
+
+    public function folderToZip(){
+        if (!is_file($this->appPath.'/zipperTask.json'))
+            return null;
+        
+        $file = file_get_contents($this->appPath.'/zipperTask.json');
+        $task = json_decode($file, true);
+        return $task['toZip'];
+    }
+
+
+
+    public function addZipTask($path) {
+
+        try {
+            if (is_file($this->appPath.'/zipperTask.json'))
+            {
+                $file = file_get_contents($this->appPath.'/zipperTask.json');
+                $task = json_decode($file, true);
+            } else {
+                $task=array("toZip"=>[]);
+            }
+
+            if (!in_array($path,$task['toZip']))
+                array_push($task['toZip'],$path);
+            $jsonData = json_encode($task);
+            file_put_contents($this->appPath.'/zipperTask.json',$jsonData);
+            return true;
+        
+        } catch (\Exception $e) {
+             return false;
+        }
+    }
+
+
+    public function deleteZipTask($path) {
+
+        try {
+            if (is_file($this->appPath.'/zipperTask.json'))
+            {
+                $file = file_get_contents($this->appPath.'/zipperTask.json');
+                $task = json_decode($file, true);
+            } else {
+                return true;
+            }
+
+            $index = array_search($path,$task['toZip']);
+            if ($index!==false)
+                unset($task['toZip'][$index]);
+
+            $jsonData = json_encode($task);
+            file_put_contents($this->appPath.'/zipperTask.json',$jsonData);
+            return true;
+        
+        } catch (\Exception $e) {
+             return false;
+        }
+    }
+
+    public function zip($path){
+
+        $archive = $this->appPath.'/'.$path.'/'.$path.'.zip';
+        $zip = new \ZipArchive();
+        if ($zip->open($archive, \ZipArchive::CREATE)!==TRUE) {
+            return "Cannot create archive";
+        }
+        $rep=$this->appPath.'/'.$path.'/800/';
+        $files = scandir($rep);
+        foreach($files as $file) {
+            if (is_file($rep.$file))
+                $zip->addFile($rep.$file,$file);
+        }
+        
+        $zip->close();
+        return $this->deleteZipTask($path);
+
+    }
+
+
+    public function zipAll(){
+
+        $folderToZip = $this->folderToZip();
+        foreach($folderToZip as $folder) {
+            $this->zip($folder);
         }
     }
 }

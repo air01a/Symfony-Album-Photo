@@ -60,6 +60,10 @@ class ApiVoter extends Voter
 
     private function canView(Album $album, User $user)
     {
+        if ($this->security->isGranted('ROLE_ADMIN')) 
+            return true;
+
+
         foreach($album->getRights() as $right)
             if ($right->getUser()->getId()==$user->getId())
                 return true;
