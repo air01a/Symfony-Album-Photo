@@ -27,7 +27,7 @@ class FileHelper
             if ($thumb==1)
                 $image = file_get_contents($photoFile);
             else
-                $image=$this->createThumbnail($photoFile,1800,1800);
+                $image=$this->createThumbnail($photoFile,1200,800);
 
         } else {
             // A corriger
@@ -87,7 +87,7 @@ class FileHelper
         if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
         //    $result = imagejpeg($dst_img,$destination_name,100);
             ob_start();
-            imagejpeg($dst_img,NULL,100);
+            imagejpeg($dst_img,NULL,93);
             $image = ob_get_clean();
         }
 
