@@ -24,15 +24,19 @@ class FileHelper
         $photoFile = $this->appPath.$album->getPath().$size.$photo->getPath();
 	if (file_exists($photoFile))
         {
-            $image = file_get_contents($photoFile);
+            if ($thumb==1)
+                $image = file_get_contents($photoFile);
+            else
+                $image=$this->createThumbnail($photoFile,1800,1800);
 
         } else {
-            $image = file_get_contents($this->appPath.'/public/images/diapo/20140530_154227.jpg');
+            // A corriger
+            $image = file_get_contents(\dirname(__DIR__).'/../public/images/diapo/20140530_154227.jpg');
         }
         return $image;
     }
 
-    public function createThumbnail($image_name,$destination_name,$new_width,$new_height)
+    public function createThumbnail($image_name,$new_width,$new_height)
     {
 
         $mime = getimagesize($image_name);
@@ -72,18 +76,26 @@ class FileHelper
 
         // New save location
        // $new_thumb_loc = $moveToDir . $image_name;
-
+        $image=null;
         if($mime['mime']=='image/png') {
-            $result = imagepng($dst_img,$destination_name,8);
+          //  $result = imagepng($dst_img,$destination_name,8);
+            ob_start();
+            imagepng($dst_img,NULL,8);
+            $image = ob_get_clean();
         }
+        
         if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
-            $result = imagejpeg($dst_img,$destination_name,100);
+        //    $result = imagejpeg($dst_img,$destination_name,100);
+            ob_start();
+            imagejpeg($dst_img,NULL,100);
+            $image = ob_get_clean();
         }
+
 
         imagedestroy($dst_img); 
         imagedestroy($src_img);
 
-        return $result;
+        return $image;
     }
 
     public function compress($source, $destination, $quality) {
@@ -123,7 +135,8 @@ class FileHelper
           //  return -3;
         try {
             $file = $uploadedFile[0]->move($directory.'/800/', $photo->getPath());
-            $this->createThumbnail($directory.'/800/'.$photo->getPath(),$directory.'/320/'.$photo->getPath(),250,250);
+            $image = $this->createThumbnail($directory.'/800/'.$photo->getPath(),250,250);
+            file_put_contents($directory.'/320/'.$photo->getPath(),$image);
         } catch(\Exception $e) {
             var_dump($e->getMessage());
             $photo->setPath(null);
