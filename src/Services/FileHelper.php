@@ -17,18 +17,71 @@ class FileHelper
 
     }
 
+    public function bestRatio($photo, $x,$y)
+    {
+        list($old_x, $old_y, $type, $attr)=getimagesize($photo);
+
+
+        if($old_x > $old_y) 
+        {
+            $thumb_w    =   $x;
+            $thumb_h    =   $old_y*($x/$old_x);
+        }
+
+        if($old_x < $old_y) 
+        {
+            $thumb_w    =   $old_x*($y/$old_y);
+            $thumb_h    =   $y;
+        }
+
+        if($old_x == $old_y) 
+        {
+            $thumb_w    =   $x;
+            $thumb_h    =   $y;
+        }
+        return array('x'=>$thumb_w,'y'=>$thumb_h);
+    }
+
+    public function bestRatioMini($photo, $x,$y)
+    {
+        list($old_x, $old_y, $type, $attr)=getimagesize($photo);
+
+
+        if($old_x > $old_y) 
+        {
+            $thumb_w    =   $x;
+            $thumb_h    =   $old_y*($y/$old_x);
+        }
+
+        if($old_x < $old_y) 
+        {
+            $thumb_w    =   $old_x*($x/$old_y);
+            $thumb_h    =   $y;
+        }
+
+        if($old_x == $old_y) 
+        {
+            $thumb_w    =   $x;
+            $thumb_h    =   $y;
+        }
+        return array('x'=>$thumb_w,'y'=>$thumb_h);
+    }
 
     public function getPhotoFile(Album $album,Photos $photo,int $thumb){
        ($thumb==1) ? $size="/320/" : $size="/800/";
        // $size="/320/";
         $photoFile = $this->appPath.$album->getPath().$size.$photo->getPath();
+        
 	if (file_exists($photoFile))
         {
             if ($thumb==1)
                 $image = file_get_contents($photoFile);
-            else
-                $image=$this->createThumbnail($photoFile,1800,1800);
-
+            else {
+                
+                $ratio=$this->bestRatio($photoFile,1200,800);
+                
+                $image=$this->createThumbnail($photoFile,$ratio['x'],$ratio['y']);
+            }
         } else {
             // A corriger
             $image = file_get_contents(\dirname(__DIR__).'/../public/images/diapo/20140530_154227.jpg');
@@ -48,30 +101,14 @@ class FileHelper
             $src_img = imagecreatefromjpeg($image_name);
         }   
 
+
+
         $old_x          =   imageSX($src_img);
         $old_y          =   imageSY($src_img);
 
-        if($old_x < $old_y) 
-        {
-            $thumb_w    =   $new_width;
-            $thumb_h    =   $old_y*($new_height/$old_x);
-        }
+        $dst_img        =   ImageCreateTrueColor($new_width,$new_height);
 
-        if($old_x > $old_y) 
-        {
-            $thumb_w    =   $old_x*($new_width/$old_y);
-            $thumb_h    =   $new_height;
-        }
-
-        if($old_x == $old_y) 
-        {
-            $thumb_w    =   $new_width;
-            $thumb_h    =   $new_height;
-        }
-
-        $dst_img        =   ImageCreateTrueColor($thumb_w,$thumb_h);
-
-        imagecopyresampled($dst_img,$src_img,0,0,0,0,$thumb_w,$thumb_h,$old_x,$old_y); 
+        imagecopyresampled($dst_img,$src_img,0,0,0,0,$new_width,$new_height,$old_x,$old_y); 
 
 
         // New save location
@@ -87,7 +124,7 @@ class FileHelper
         if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
         //    $result = imagejpeg($dst_img,$destination_name,100);
             ob_start();
-            imagejpeg($dst_img,NULL,100);
+            imagejpeg($dst_img,NULL,90);
             $image = ob_get_clean();
         }
 
@@ -135,7 +172,8 @@ class FileHelper
           //  return -3;
         try {
             $file = $uploadedFile[0]->move($directory.'/800/', $photo->getPath());
-            $image = $this->createThumbnail($directory.'/800/'.$photo->getPath(),250,250);
+            $ratio=$this->bestRatio($file,250,250);
+            $image = $this->createThumbnail($directory.'/800/'.$photo->getPath(),$ratio['x'],$ratio['y']);
             file_put_contents($directory.'/320/'.$photo->getPath(),$image);
         } catch(\Exception $e) {
             var_dump($e->getMessage());
