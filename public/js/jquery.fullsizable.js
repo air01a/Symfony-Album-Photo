@@ -52,7 +52,8 @@ Options:
 
       image.ratio = (image.naturalHeight / image.naturalWidth).toFixed(2);
     }
-	
+
+
     if ($(window).height() / image.ratio > $(window).width()) {
       $(image).width($(window).width());
       $(image).height($(window).width() * image.ratio);
@@ -202,7 +203,7 @@ Options:
       
       var image;
       image = new Image;
-      image.buffer_src = $(this).attr('href');
+      image.buffer_src = $(this).attr('href')+"&win="+$(window).width()+'x'+$(window).height();
       image.index = images.length;
       image.id=image.index;
       image.alt=$(this).attr('alt');

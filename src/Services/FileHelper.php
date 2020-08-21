@@ -76,7 +76,7 @@ class FileHelper
             if ($thumb==1)
                 $image = file_get_contents($photoFile);
             else {
-                $ratio=$this->bestRatio($photoFile,1200,800);
+                $ratio=$this->bestRatio($photoFile,1000,700);
                 $image=$this->createThumbnail($photoFile,$ratio['x'],$ratio['y']);
             }
         } else {
