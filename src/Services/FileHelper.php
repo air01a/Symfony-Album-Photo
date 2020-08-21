@@ -13,7 +13,7 @@ class FileHelper
         $directory = $_SERVER['PHOTO_STORAGE'];
         if ($directory[0]!='/')
             $directory =dirname(__DIR__).'/../'.$directory;
-        $this->appPath = $directory;
+        $this->appPath = $directory.'/';
 
     }
 
@@ -22,12 +22,12 @@ class FileHelper
        ($thumb==1) ? $size="/320/" : $size="/800/";
        // $size="/320/";
         $photoFile = $this->appPath.$album->getPath().$size.$photo->getPath();
-        if (file_exists($photoFile))
+	if (file_exists($photoFile))
         {
             $image = file_get_contents($photoFile);
 
         } else {
-            $image = file_get_contents('/home/erwan.niquet/dev/php/delr1/DelR1WebSite/public/images/diapo/20140530_154227.jpg');
+            $image = file_get_contents($this->appPath.'/public/images/diapo/20140530_154227.jpg');
         }
         return $image;
     }

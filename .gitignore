@@ -4,10 +4,12 @@
 /.env.local
 /.env.local.php
 /.env.*.local
+/.env
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
 /vendor/
+config/jwt/*
 ###< symfony/framework-bundle ###
 
 ###> lexik/jwt-authentication-bundle ###

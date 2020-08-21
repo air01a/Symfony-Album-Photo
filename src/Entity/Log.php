@@ -38,9 +38,9 @@ class Log
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime", nullable=false, options={"default"="'0000-00-00 00:00:00'"})
+     * @ORM\Column(name="date", type="datetime", nullable=false, options={"default"="0000-00-00 00:00:00"})
      */
-    private $date = '\'0000-00-00 00:00:00\'';
+    private $date = '0000-00-00 00:00:00';
 
 
 }
