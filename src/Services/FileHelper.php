@@ -32,6 +32,60 @@ class FileHelper
         return $image;
     }
 
+    public function createThumbnail($image_name,$destination_name,$new_width,$new_height)
+    {
+
+        $mime = getimagesize($image_name);
+
+        if($mime['mime']=='image/png') { 
+            $src_img = imagecreatefrompng($image_name);
+        }
+        if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
+            $src_img = imagecreatefromjpeg($image_name);
+        }   
+
+        $old_x          =   imageSX($src_img);
+        $old_y          =   imageSY($src_img);
+
+        if($old_x < $old_y) 
+        {
+            $thumb_w    =   $new_width;
+            $thumb_h    =   $old_y*($new_height/$old_x);
+        }
+
+        if($old_x > $old_y) 
+        {
+            $thumb_w    =   $old_x*($new_width/$old_y);
+            $thumb_h    =   $new_height;
+        }
+
+        if($old_x == $old_y) 
+        {
+            $thumb_w    =   $new_width;
+            $thumb_h    =   $new_height;
+        }
+
+        $dst_img        =   ImageCreateTrueColor($thumb_w,$thumb_h);
+
+        imagecopyresampled($dst_img,$src_img,0,0,0,0,$thumb_w,$thumb_h,$old_x,$old_y); 
+
+
+        // New save location
+       // $new_thumb_loc = $moveToDir . $image_name;
+
+        if($mime['mime']=='image/png') {
+            $result = imagepng($dst_img,$destination_name,8);
+        }
+        if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
+            $result = imagejpeg($dst_img,$destination_name,100);
+        }
+
+        imagedestroy($dst_img); 
+        imagedestroy($src_img);
+
+        return $result;
+    }
+
     public function compress($source, $destination, $quality) {
 
         $info = \getimagesize($source);
@@ -44,6 +98,7 @@ class FileHelper
     
         elseif ($info['mime'] == 'image/png') 
             $image = imagecreatefrompng($source);
+        imagesetinterpolation($image,IMG_SINC);
         $thumb = imagescale( $image, 320 ); 
 
         \imagejpeg($thumb, $destination, $quality);
@@ -68,7 +123,7 @@ class FileHelper
           //  return -3;
         try {
             $file = $uploadedFile[0]->move($directory.'/800/', $photo->getPath());
-            $this->compress($directory.'/800/'.$photo->getPath(),$directory.'/320/'.$photo->getPath(),75);
+            $this->createThumbnail($directory.'/800/'.$photo->getPath(),$directory.'/320/'.$photo->getPath(),250,250);
         } catch(\Exception $e) {
             var_dump($e->getMessage());
             $photo->setPath(null);

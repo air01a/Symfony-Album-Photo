@@ -264,12 +264,9 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		//10 seconds delay
 		$scope.timeout=function() {
 			$timeout( function(){
-			console.log("time to get new token");
 				$http.get("/api/v1/getToken")
 					.then(function(res){
-						console.log(res);
 						token=res.data.token;
-						console.log(token);
 						$http.defaults.headers.common = { 'Authorization' : 'Bearer '+token };
 						$scope.timeout();
 					});	
@@ -296,7 +293,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		//* 
 		//************************************************************************
 		$scope.managePublic = function(action) {
-			console.log($scope.album);
 			if ((action==1) && ($scope.album.id_pub==undefined || $scope.album.id_pub==""))
 				$scope.album.id_pub = makeRandomString(20);
 			$http.patch("/api/v1/albums/"+$scope.album.id,JSON.stringify({'public':action,'idPub':$scope.album.id_pub}))
@@ -322,7 +318,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 				$scope.deleteDialog=ngDialog.open({ template: 'deleteAlbum',className: 'ngdialog-theme-default',scope:$scope });
 			else {
 				$scope.deleteDialog.close();
-				console.log("DeleteALbum");
 				$http.delete("/api/v1/albums/"+$scope.album.id)
 					.then(function(res){
 
@@ -374,17 +369,19 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		//* 
 		//************************************************************************
 		$scope.uploadOneFile=function (file_obj,album, start,end) {
-			console.log("Thread start="+start+",end="+end+",In progress="+$scope.uploadInProgress);
 			if(start>end)
+			{
+				if($scope.uploadInProgress==0)
+					$scope.actShowPhoto(album);
 				return;
+			}
 			$http.post('/api/v1/albums/'+album+'/photos',{'album_id':album})
 						.then(function(res) {
-							file = file_obj[start];
-							console.log(file);
+							let file = file_obj[start];
 							$scope.uploadInProgress++;
 							$scope.upload[file.name]='Downloading';
-							photo=res.data;
-							form_data = new FormData();
+							let photo=res.data;
+							let form_data = new FormData();
 							form_data.append('file[]', file); 
 							$http.post('/api/v1/albums/'+album+'/photos/'+photo.id,form_data,{headers: {
 								'Content-Type': undefined
@@ -395,15 +392,11 @@ angular.module('delr1', ['angular.img','ngDialog'])
 									$scope.upload[file.name]='Downloaded';
 									$scope.uploadInProgress--;
 									$scope.uploadOneFile(file_obj,album,start+1,end);
-									if($scope.uploadInProgres==0)
-										$scope.actShowPhoto(album);
-									
 								}, function (res) {
 									$scope.upload[file.name]='Error';
 									$scope.uploadInProgress--;
 									$scope.uploadOneFile(file_obj,album,start+1,end);
-									if($scope.uploadInProgres==0)
-										$scope.actShowPhoto(album);
+									
 								}
 								);
 						});
@@ -414,20 +407,23 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 		$scope.manageFileUpload = function(file_obj) {
 			if(file_obj != undefined) {
-				album = $scope.album.id;
+				let album = $scope.album.id;
 				ngDialog.open({ template: 'uploadid',className: 'ngdialog-theme-default',scope:$scope });
 				$scope.uploadInProgress=0;
 				$scope.upload={};
 				$scope.lockupload=1;
 				
-				for(i=0; i<file_obj.length; i++)
+				for(let i=0; i<file_obj.length; i++)
 					$scope.upload[file_obj[i].name]='waiting';
 				
 				step=Math.ceil(file_obj.length/5);// 5 upload in parallel max
-				i=0;
+				let i=0;
 				while(i<file_obj.length) {
-					$scope.uploadOneFile(file_obj,album,i,i+step-1);
-					i=i+step;
+					let limit = i+step-1;
+					if (limit>=file_obj.length)
+						limit=file_obj.length-1;
+					$scope.uploadOneFile(file_obj,album,i,limit);
+					i+=step;
 				}
 				
 				
@@ -467,7 +463,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 		// API Request to modify existing user
 		$scope.modifyUser=function() {
-			req = {'username':$scope.editUser.username,'isAdmin':$scope.editUser.isAdmin};
+			let req = {'username':$scope.editUser.username,'isAdmin':$scope.editUser.isAdmin};
 			if ($scope.editUser.password!=""){
 				req['password']=$scope.editUser.password;
 			}
@@ -580,13 +576,11 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$http.get('/api/v1/albums/'+id+'/rights')
 					.then(function(res){
 						$scope.albumRight = res.data;
-						console.log($scope.albumRight);
 						$http.get('/api/v1/users')
 							.then(function(res){
 								$scope.users = res.data;
 								var u = [];
 								$scope.users.forEach(element => {
-									console.log(element);
 									hasRight=false;
 									$scope.albumRight.forEach(r => {
 										if (r.idUser==element.id)
@@ -596,7 +590,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 										u.push({'username': element.username,'id':element.id,'hasRight':hasRight});
 								});
 								$scope.rights=u;
-								console.log($scope.rights);
 							});
 					});
 
@@ -736,7 +729,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		//************************************************************************
 		$scope.displayGal = function(){
 			$scope.showphoto=false;
-			console.log("start gal "+$scope.startGal)
 					//	$("#polaroid").width(Math.floor($("#polaroid").width() / 260)*260);
 					if ($scope.startGal!=0) {
 						$page="&page="+btoa(JSON.stringify({"page":$scope.startGal+1,"limit":$scope.galLimit}));
@@ -792,7 +784,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		//************************************************************************
 		$scope.returnToGal = function () {
 			idgal=false;
-
 			$(window).scrollTop($scope.back);
 			$scope.showphoto=false;
 			$scope.hash="";
