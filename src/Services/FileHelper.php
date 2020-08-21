@@ -121,7 +121,7 @@ class FileHelper
         if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
         //    $result = imagejpeg($dst_img,$destination_name,100);
             ob_start();
-            imagejpeg($dst_img,NULL,93);
+            imagejpeg($dst_img,NULL,85);
             $image = ob_get_clean();
         }
 
