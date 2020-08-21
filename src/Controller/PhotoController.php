@@ -83,13 +83,28 @@ class PhotoController extends AbstractFOSRestController
      * @Rest\Get("/api/v1/albums/{id}/photos/random", name="app_photos_download_rand")
      * requirements = {"id"="\d+"}
      * @Rest\View
+     * @Rest\QueryParam(
+     *     name="thumb",
+     *     requirements="\d",
+     *     nullable=true,
+     *     default="1",
+     *     description="0 to full size, 1 for thumbnail"
+     * )
+     * 
+     * @Rest\QueryParam(
+     *     name="size",
+     *     requirements="[0-9]*x[0-9]*",
+     *     nullable=true,
+     *     default="1200x700",
+     *     description="size of image"
+     * )
      */
-    public function downloadRandomAction(Album $album,FileHelper $fileHelper)
+    public function downloadRandomAction(Album $album,FileHelper $fileHelper,ParamFetcherInterface $paramFetcher)
     {
         $this->denyAccessUnlessGranted('view', $album);
 
         $photo = $this->getDoctrine()->getRepository('App:Photos')->getRandomPhoto($album->getId());
-        return $this->downloadActionHelper($album,$photo,1,$fileHelper);
+        return $this->downloadActionHelper($album,$photo,$paramFetcher,$fileHelper);
     }
     /**
      * @Rest\View(StatusCode = 200)
@@ -127,7 +142,7 @@ class PhotoController extends AbstractFOSRestController
      * downloadAction but without query parameters to be called internally
      */
 
-    public function downloadActionHelper(Album $album, Photos $photo,int $thumb,FileHelper $fileHelper)
+    public function downloadActionHelper(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher,FileHelper $fileHelper)
     {
         $this->denyAccessUnlessGranted('view', $album);
 
@@ -136,7 +151,7 @@ class PhotoController extends AbstractFOSRestController
             return $this->view("Album and photo mismatch", Response::HTTP_BAD_REQUEST);
         }
 
-        $image = $fileHelper->getPhotoFile($album,$photo,$thumb);
+        $image = $fileHelper->getPhotoFile($album,$photo,$paramFetcher->get('thumb'),$paramFetcher->get('size'));
         
         $headers = array(
             'Content-Type'     => 'image/jpeg',
@@ -156,11 +171,18 @@ class PhotoController extends AbstractFOSRestController
      *     default="1",
      *     description="0 to full size, 1 for thumbnail"
      * )
+     * @Rest\QueryParam(
+     *     name="size",
+     *     requirements="[0-9]*x[0-9]*",
+     *     nullable=true,
+     *     default="1200x700",
+     *     description="size of image"
+     * )
 
      */
     public function downloadAction(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher,FileHelper $fileHelper)
     {
-        return $this->downloadActionHelper($album,$photo,$paramFetcher->get('thumb'),$fileHelper);
+        return $this->downloadActionHelper($album,$photo,$paramFetcher,$fileHelper);
     }
 
          /**
@@ -183,7 +205,13 @@ class PhotoController extends AbstractFOSRestController
      *     description="token"
      * )
      * 
-
+     * @Rest\QueryParam(
+     *     name="size",
+     *     requirements="[0-9]*x[0-9]*",
+     *     nullable=true,
+     *     default="1200x700",
+     *     description="size of image"
+     * )
      */
     public function downloadbyhashAction(Album $album, Photos $photo,FileHelper $fileHelper,ParamFetcherInterface $paramFetcher)
     {
@@ -192,7 +220,7 @@ class PhotoController extends AbstractFOSRestController
         {
             $this->getUser()->setApiKey($token);
         }
-        return $this->downloadActionHelper($album,$photo,$paramFetcher->get('thumb'),$fileHelper);
+        return $this->downloadActionHelper($album,$photo,$paramFetcher,$fileHelper);
     }
 
     /**

@@ -67,7 +67,7 @@ class FileHelper
         return array('x'=>$thumb_w,'y'=>$thumb_h);
     }
 
-    public function getPhotoFile(Album $album,Photos $photo,int $thumb){
+    public function getPhotoFile(Album $album,Photos $photo,int $thumb,$win){
        ($thumb==1) ? $size="/320/" : $size="/800/";
        // $size="/320/";
         $photoFile = $this->appPath.$album->getPath().$size.$photo->getPath();
@@ -76,7 +76,19 @@ class FileHelper
             if ($thumb==1)
                 $image = file_get_contents($photoFile);
             else {
-                $ratio=$this->bestRatio($photoFile,1000,700);
+                $x=1000;
+                $y=700;
+                if ($win) {
+                    $windows=explode('x',$win);
+                    if (sizeof($windows)==2)
+                    {
+                        $x=$windows[0];
+                        $y=$windows[1];
+                    }
+                    
+                }
+
+                $ratio=$this->bestRatio($photoFile,$x,$y);
                 $image=$this->createThumbnail($photoFile,$ratio['x'],$ratio['y']);
             }
         } else {

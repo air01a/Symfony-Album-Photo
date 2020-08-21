@@ -203,7 +203,7 @@ Options:
       
       var image;
       image = new Image;
-      image.buffer_src = $(this).attr('href')+"&win="+$(window).width()+'x'+$(window).height();
+      image.buffer_src = $(this).attr('href')+"&size="+$(window).width()+'x'+$(window).height();
       image.index = images.length;
       image.id=image.index;
       image.alt=$(this).attr('alt');
