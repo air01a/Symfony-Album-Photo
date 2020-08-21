@@ -71,23 +71,14 @@ class FileHelper
        ($thumb==1) ? $size="/320/" : $size="/800/";
        // $size="/320/";
         $photoFile = $this->appPath.$album->getPath().$size.$photo->getPath();
-        
 	if (file_exists($photoFile))
         {
             if ($thumb==1)
                 $image = file_get_contents($photoFile);
-<<<<<<< HEAD
             else {
-                
                 $ratio=$this->bestRatio($photoFile,1200,800);
-                
                 $image=$this->createThumbnail($photoFile,$ratio['x'],$ratio['y']);
             }
-=======
-            else
-                $image=$this->createThumbnail($photoFile,1200,800);
-
->>>>>>> 4a8c8fb4ce1b14f580cfec817f5279734495f041
         } else {
             // A corriger
             $image = file_get_contents(\dirname(__DIR__).'/../public/images/diapo/20140530_154227.jpg');
@@ -100,12 +91,12 @@ class FileHelper
 
         $mime = getimagesize($image_name);
 
-        if($mime['mime']=='image/png') { 
+        if($mime['mime']=='image/png') {
             $src_img = imagecreatefrompng($image_name);
         }
         if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
             $src_img = imagecreatefromjpeg($image_name);
-        }   
+        }
 
 
 
@@ -130,11 +121,7 @@ class FileHelper
         if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
         //    $result = imagejpeg($dst_img,$destination_name,100);
             ob_start();
-<<<<<<< HEAD
             imagejpeg($dst_img,NULL,93);
-=======
-            imagejpeg($dst_img,NULL,93);
->>>>>>> 4a8c8fb4ce1b14f580cfec817f5279734495f041
             $image = ob_get_clean();
         }
 
