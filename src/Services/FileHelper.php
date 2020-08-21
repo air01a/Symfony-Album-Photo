@@ -76,12 +76,18 @@ class FileHelper
         {
             if ($thumb==1)
                 $image = file_get_contents($photoFile);
+<<<<<<< HEAD
             else {
                 
                 $ratio=$this->bestRatio($photoFile,1200,800);
                 
                 $image=$this->createThumbnail($photoFile,$ratio['x'],$ratio['y']);
             }
+=======
+            else
+                $image=$this->createThumbnail($photoFile,1200,800);
+
+>>>>>>> 4a8c8fb4ce1b14f580cfec817f5279734495f041
         } else {
             // A corriger
             $image = file_get_contents(\dirname(__DIR__).'/../public/images/diapo/20140530_154227.jpg');
@@ -124,7 +130,11 @@ class FileHelper
         if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
         //    $result = imagejpeg($dst_img,$destination_name,100);
             ob_start();
-            imagejpeg($dst_img,NULL,90);
+<<<<<<< HEAD
+            imagejpeg($dst_img,NULL,93);
+=======
+            imagejpeg($dst_img,NULL,93);
+>>>>>>> 4a8c8fb4ce1b14f580cfec817f5279734495f041
             $image = ob_get_clean();
         }
 
