@@ -98,7 +98,7 @@ class FileHelper
             }
         } else {
             // A corriger
-            $image = file_get_contents(\dirname(__DIR__).'/../public/images/diapo/20140530_154227.jpg');
+            $image = file_get_contents(\dirname(__DIR__).'/../public/images/notfound.jpeg');
         }
         return $image;
     }
