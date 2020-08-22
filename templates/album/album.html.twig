@@ -195,22 +195,23 @@ $(document).ready(function() {
 {% verbatim %}
 	<div ng-show="showphoto" style="text-align:center;margin-left: auto; margin-right: auto">
 				<h3 class="pb1"><span class="col1">Admin</span></h3>
+				<a href ng-click="returnToGal()"><img class="img_inner fleft" src="images/g1.png" width="40px"></a>
 				<div style='float:right'><button type="button" class="defaultbutton red" ng-click="deleteAlbum()">Delete Album</button></div>
-                <h4>Galerie <input type="text" ng-model="album.name" size="50"></h4>
-                <a href ng-click="returnToGal()"><img class="img_inner fleft" src="images/g1.png" width="40px"></a>                <div class="extra_wrapper" style="text-align: left">
+                                <div class="extra_wrapper" style="text-align: left">
+
+                <label class="alignedLabel">Galerie</label> <input type="text" ng-model="album.name" size="50">
                 <p>
-                        <b><input type="text" ng-model="album.date"></b>Pays:
+                       <label class="alignedLabel">Date</label><input type="text" ng-model="album.date"><br/><label class="alignedLabel">Pays:</label>
 			   <input type="text" size="2" ng-model="album.country"><button type="button" class="defaultbutton green" ng-click="displayCountry()">List</button>
-			<br /><textarea cols="100" ng-model="album.commentaire"></textarea>
-			<p>Youtube</p>
-			<br /><textarea cols="100" ng-model="album.youtube"></textarea>
-                </p></div>
-		<p style="float: left">
+			<br /><p><label class="alignedLabel">Commentaire</label></p><textarea cols="100" ng-model="album.commentaire"></textarea>
+			<label class="alignedLabel">Youtube</label>
+			<textarea cols="100" ng-model="album.youtube"></textarea>
+                </div>
                 <button type="button" class="defaultbutton orange" ng-click="managePublic(1)" ng-show="album.public==0">Public</button>
                	<div ng-show="album.public==1" style="float: left">
                         <button type="button" class="defaultbutton green" ng-click="managePublic(0)">Private</button>
                         {{ baseUrl }}/albumpublic/{{album.id}}?token={{album.id_pub}}
-                </div></p><p style="height: 20px"></p>
+                </div></p><p style="height: 20px">
 
 		<div class="right_wrapper">
 			<div ng-repeat="right in rights" class="right_box">

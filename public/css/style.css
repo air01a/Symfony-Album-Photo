@@ -533,3 +533,10 @@ footer {
 		#border: 3px solid green;
 		#padding: 10px;
 }
+
+.alignedLabel
+{
+    display:block; 
+    width:100px; /* Attention : prenez une largeur suffisamment grande */
+    float:left;
+}

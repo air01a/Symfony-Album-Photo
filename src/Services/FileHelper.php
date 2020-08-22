@@ -39,6 +39,11 @@ class FileHelper
             $thumb_w    =   $x;
             $thumb_h    =   $y;
         }
+
+        if ($thumb_w>$old_x || $thumb_h>$old_y){
+            $thumb_w=$old_x;
+            $thumb_h=$old_y;
+        }   
         return array('x'=>$thumb_w,'y'=>$thumb_h);
     }
 
@@ -98,7 +103,7 @@ class FileHelper
         return $image;
     }
 
-    public function createThumbnail($image_name,$new_width,$new_height)
+    public function createThumbnail($image_name,$new_width,$new_height,$quality=85)
     {
 
         $mime = getimagesize($image_name);
@@ -133,7 +138,7 @@ class FileHelper
         if($mime['mime']=='image/jpg' || $mime['mime']=='image/jpeg' || $mime['mime']=='image/pjpeg') {
         //    $result = imagejpeg($dst_img,$destination_name,100);
             ob_start();
-            imagejpeg($dst_img,NULL,85);
+            imagejpeg($dst_img,NULL,$quality);
             $image = ob_get_clean();
         }
 
@@ -181,11 +186,10 @@ class FileHelper
           //  return -3;
         try {
             $file = $uploadedFile[0]->move($directory.'/800/', $photo->getPath());
-            $ratio=$this->bestRatio($file,250,250);
-            $image = $this->createThumbnail($directory.'/800/'.$photo->getPath(),$ratio['x'],$ratio['y']);
+            $ratio=$this->bestRatioMini($file,300,300);
+            $image = $this->createThumbnail($directory.'/800/'.$photo->getPath(),$ratio['x'],$ratio['y'],95);
             file_put_contents($directory.'/320/'.$photo->getPath(),$image);
         } catch(\Exception $e) {
-            var_dump($e->getMessage());
             $photo->setPath(null);
             return -1;
         }
