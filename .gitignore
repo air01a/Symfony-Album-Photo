@@ -10,6 +10,8 @@
 /var/
 /vendor/
 config/jwt/*
+/public/imagesperso
+/templates/slideshow/slideshow.html
 ###< symfony/framework-bundle ###
 
 ###> lexik/jwt-authentication-bundle ###

@@ -1,0 +1,13 @@
+<h2><span>Bienvenue sur notre site <span class="col1">Photos</span></span></h2>
+        <center>
+        <div class="grid_5">
+        <h3><span class="col1">Her</span></h3>
+        <img src='images/her.png' class='imageleft' width="100px">
+Comment
+        </div>
+        <div class="grid_5 rightalign">
+        <h3><span class="col1">Him</span></h3>
+        <img src='images/him.png' class='imageright' width="100px">
+        Comment 
+        </div>
+        </div></center>

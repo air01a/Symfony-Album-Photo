@@ -3,20 +3,7 @@
 
 {% block body %}
         <link rel="stylesheet" type="text/css" href="js/style.css" />
-
-      <h2><span>Bienvenue sur notre site <span class="col1">Photos</span></span></h2>
-        <center>
-        <div class="grid_5">
-        <h3><span class="col1">Her</span></h3>
-        <img src='images/her.png' class='imageleft' width="100px">
-Comment
-        </div>
-        <div class="grid_5 rightalign">
-        <h3><span class="col1">Him</span></h3>
-        <img src='images/him.png' class='imageright' width="100px">
-        Comment 
-        </div>
-        </div></center>
+        {{ content|raw }}
         <div id="wowslider-container1">
         <div class="ws_images"><ul>
                 {% for image in diapo %}
@@ -25,6 +12,4 @@ Comment
         </ul></div>
         <script type="text/javascript" src="js/wowslider.js"></script>
         <script type="text/javascript" src="js/script.js"></script>
-
-
 {% endblock %}

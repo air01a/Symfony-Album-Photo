@@ -22,6 +22,13 @@ class SlideShowController extends AbstractController
         $diapo=array();
         $i=0;
 
+        $dir = \dirname(__DIR__).'/../templates/';
+        if (is_file($dir.'slideshow/slideshow.html'))
+            $content=file_get_contents($dir.'slideshow/slideshow.html');
+        else
+            $content=file_get_contents($dir.'slideshow/slideshow.html.default');
+
+
         foreach ($images as $file) 
             if (is_file($DIRDIAPO.$file) && strtoupper(pathinfo($file, PATHINFO_EXTENSION))=='JPG') {
                 array_push($diapo,array('file'=>$DIRDIAPO.$file,'id'=>'wows1_'.$i));
@@ -30,7 +37,8 @@ class SlideShowController extends AbstractController
 
         return $this->render('slideshow/slideshow.html.twig', [
             'diapo' => $diapo,
-            'current'=>'slideshow'
+            'current'=>'slideshow',
+            'content'=>$content
         ]);
     }
 }
