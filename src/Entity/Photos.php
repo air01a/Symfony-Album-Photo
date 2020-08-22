@@ -42,6 +42,16 @@ class Photos
     
     private $albumId = '0';
 
+
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="order_in_album", type="integer", nullable=true)
+     *      
+     */
+    private $orderInAlbum=1000;
+
     /**
      * @var string
      *
@@ -85,5 +95,15 @@ class Photos
             }
         }
         return $this;
+    }
+
+    public function getOrderInAlbum()
+    {
+        return $this->orderInAlbum;
+    }
+
+    public function setOrderInAlbum($order)
+    {
+        $this->orderInAlbum=$order;
     }
 }

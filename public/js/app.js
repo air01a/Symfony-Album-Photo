@@ -288,6 +288,25 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$('#inputcomment').focus();
 		});
 
+
+	
+	
+		$scope.getIdsOfImages=function() { 
+			var values = []; 
+			$('.photos').each(function(index) { 
+				values.push($(this).attr("id") 
+							.replace("photo", "")); 
+			}); 
+			console.log(values);
+			$http.patch('/api/v1/albums/'+$scope.album.id+'/photos/orders',values)
+			  .then(function(res) {
+					//$scope.photos=res.data;
+
+			  },function(res){
+					alert('Warning, error during reordering');
+			  });
+    	}  
+
 		//************************************************************************
 		//* Set or unset public attribute on album
 		//* 
@@ -358,7 +377,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.updateComment = function (index,comment) {
 			$http.patch("/api/v1/albums/"+$scope.album.id+"/photos/"+$scope.photos[index].id,JSON.stringify({'commentaire': comment}))
 				.then(function(res) {
-					$scope.photos[index]=res.data;
+					$scope.photos[index].commentaire=res.data.commentaire;
 					ngDialog.close($scope.dialogid);
 				});
 		}
@@ -607,8 +626,14 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			param='';
 
 
-			if (admin)
+			if (admin) {
+				$("#photoList").sortable({ 
+					update: function(event, ui) { 
+							$scope.getIdsOfImages(); 
+						} //end update          
+				}); 
 				$scope.showRights(id);
+			}
 
 			$http.get('/api/v1/albums/'+id)
        				.then(function(res){
@@ -831,6 +856,18 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.baseUrl=baseURL;
 		$scope.countryMapping = countryMapping;
 		$scope.token=token;
+
+		$( "#datepicker" ).datepicker({
+			dateFormat: 'yy-mm-dd',
+			showOtherMonths: true,
+			showButtonPanel: true,
+			changeMonth: true,
+			changeYear: true,
+			autocloe:false,
+			selectOtherMonths: true,
+			onClose:function(date,obj){ $scope.album.date=date}
+		  });
+
 		if (idgal) {
             $scope.showphoto=true;
 			$scope.hash=hashgal;

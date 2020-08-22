@@ -18,7 +18,7 @@
 <script src="/js/ngDialog.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/css/ngDialog.min.css" />
 <link rel="stylesheet" href="/css/ngDialog-theme-default.css">
-
+<script src="/js/jquery.multisortable.js"></script>
 <div id="photocontrol">
 </div>
 <div ng-controller="GalleryCtrl" id="mainCtrl">
@@ -201,7 +201,7 @@ $(document).ready(function() {
 
                 <label class="alignedLabel">Galerie</label> <input type="text" ng-model="album.name" size="50">
                 <p>
-                       <label class="alignedLabel">Date</label><input type="text" ng-model="album.date"><br/><label class="alignedLabel">Pays:</label>
+                       <label class="alignedLabel">Date</label><input type="text" ng-model="album.date" id="datepicker"><br/><label class="alignedLabel">Pays:</label>
 			   <input type="text" size="2" ng-model="album.country"><button type="button" class="defaultbutton green" ng-click="displayCountry()">List</button>
 			<br /><p><label class="alignedLabel">Commentaire</label></p><textarea cols="100" ng-model="album.commentaire"></textarea>
 			<label class="alignedLabel">Youtube</label>
@@ -237,14 +237,15 @@ $(document).ready(function() {
                 <center>
                 <div style="height: 8px;"></div>
 
-                </center><div style="height: 8px;"></div>
-                <div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper">
-                        <div class="photos">
+				</center><div style="height: 8px;"></div>
+				<div id="photoList">
+                <div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper" >
+                        <div class="photos" id="photo{{ photo.id }}">
                                 <a href  ng-click="showCom(photo.id,$index)" alt="{{photo.commentaire}}">
                                         <div class="minimg" style="display: block;"><img class="ngmini" http-src="/api/v1/albums/{{ idAlbum }}/photos/{{ photo.id }}/download?thumb=1"></div>
                         </div>&nbsp;
                         <div class="commentaire" >{{photo.commentaire}}</div>
-                </div>
+				</div></div>
 
 {% endverbatim %}
 {% else %}

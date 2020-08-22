@@ -223,8 +223,41 @@ class PhotoController extends AbstractFOSRestController
         return $this->downloadActionHelper($album,$photo,$paramFetcher,$fileHelper);
     }
 
+
     /**
-     * @Rest\View(StatusCode = 200)
+     * @Rest\View(StatusCode = 202)
+     * @Rest\Patch(
+     *     path = "/api/v1/albums/{id}/photos/orders",
+     *     name = "app_photo_orders",
+     *     requirements = {"id"="\d+"}
+     *  )
+     */
+    public function orderAction(Album $album, Request $request)
+    {
+        $this->denyAccessUnlessGranted('edit', $album);
+
+        $em = $this->getDoctrine()->getManager();
+        $photos = $em->getRepository('App:Photos');
+
+        $data = json_decode($request->getContent());
+        $order=1;
+        foreach($data as $photoId){
+            $photo = $photos->findOneBy(['id'=>$photoId]);
+            if ($photo->getAlbumId()!=$album->getId())
+                var_dump("Photo & album mismatch");
+            else {
+                $photo->setOrderInAlbum($order);
+                $em->persist($photo);
+                $order+=1;
+            }
+        }
+        
+        $em->flush();
+        return $this->listAction($album);
+    }
+
+    /**
+     * @Rest\View(StatusCode = 201)
      * @Rest\Patch(
      *     path = "/api/v1/albums/{id}/photos/{idPhoto}",
      *     name = "app_photo_partupdate",
@@ -243,5 +276,7 @@ class PhotoController extends AbstractFOSRestController
         $em->flush();
         return $photo;
     }
+ 
     
+
 }

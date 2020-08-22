@@ -412,6 +412,7 @@ footer {
 	float:right;
 }
 
+.selected { outline: 1px solid red; }
 
 
 .photos_wrapper {
