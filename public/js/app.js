@@ -289,7 +289,10 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		});
 
 
-	
+		//************************************************************************
+		//* Get images order and send it
+		//* 
+		//************************************************************************ 
 	
 		$scope.getIdsOfImages=function() { 
 			var values = []; 
@@ -627,10 +630,12 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 
 			if (admin) {
+				// Make photos sortable
 				$("#photoList").sortable({ 
 					update: function(event, ui) { 
 							$scope.getIdsOfImages(); 
-						} //end update          
+						}, //end update  
+					helper:'clone'
 				}); 
 				$scope.showRights(id);
 			}
