@@ -11,6 +11,7 @@
 /vendor/
 config/jwt/*
 /public/imagesperso
+/public/favicon
 /templates/slideshow/slideshow.html
 ###< symfony/framework-bundle ###
 
