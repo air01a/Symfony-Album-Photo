@@ -52,17 +52,26 @@ Options:
 
       image.ratio = (image.naturalHeight / image.naturalWidth).toFixed(2);
     }
+    height = image.naturalHeight;
+    width  = image.naturalWidth;
+    
+    scale=1;
 
-
-    if ($(window).height() / image.ratio > $(window).width()) {
-      $(image).width($(window).width());
-      $(image).height($(window).width() * image.ratio);
-      return $(image).css('margin-top', ($(window).height() - $(image).height()) / 2);
-    } else {
-      $(image).height($(window).height());
-      $(image).width($(window).height() / image.ratio);
-      return $(image).css('margin-top', 0);
+    scaleY=$(window).height()/height;
+    scaleX=$(window).width()/width;
+    
+    if (!(scaleY>1&&scaleX>1)) {
+        if (scaleY<scaleX)
+          scale=scaleY;
+        else
+          scale=scaleX;
     }
+    console.log("scale: "+scale)
+    $(image).width(width*scale);
+    $(image).height(height*scale);
+    
+    return $(image).css('margin-top', ($(window).height() - height*scale) / 2);
+
   };
 
   keyPressed = function(e) {
@@ -203,7 +212,7 @@ Options:
       
       var image;
       image = new Image;
-      image.buffer_src = $(this).attr('href')+"&size="+$(window).width()+'x'+$(window).height();
+      image.buffer_src = $(this).attr('href')+"&size="+Math.floor($(window).width()*0.95)+'x'+Math.floor($(window).height()*0.95);
       image.index = images.length;
       image.id=image.index;
       image.alt=$(this).attr('alt');

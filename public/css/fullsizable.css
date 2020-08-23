@@ -36,7 +36,7 @@
   background-position: -32px -126px;
 }
 #fullsized_close, #fullsized_fullscreen, #fullsized_play_id{
-  position: absolute;
+  position: fixed;
   top: 0;
   display: block;
   width: 32px;
@@ -84,7 +84,8 @@
 #fullsized_image_holder img {
 	display: block;
 	margin-left: auto;
-	margin-right : auto;
+  margin-right : auto;
+  
 }
 
 #fullsized_comment {
