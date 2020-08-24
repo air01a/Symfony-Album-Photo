@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+{% block stylesheets %}
+     <meta charset="utf-8">
+     <link rel="icon" href="images/favicon.ico">
+     <link rel="shortcut icon" href="images/favicon.ico" />
+     <link rel="stylesheet" href="css/login.css">
+{% endblock %}
+
+{% block body %}
+<div id="login">    
+    <div id="triangle"></div>
+      <h1>Create administrator User for this application</h1>
+
+{{ form(form) }}
+{% endblock %}
