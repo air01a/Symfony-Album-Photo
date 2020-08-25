@@ -61,6 +61,17 @@ class User implements UserInterface, \Serializable
         return $this->id;
     }
 
+
+    //SetIdPriv does not follow normal naming convention
+    // to avoid to be setable by setPartial function
+    // Security power
+    public function setIdPriv($id)
+    {
+        $this->id=$id;
+    }
+
+
+
     public function setApiKey($api){
         $this->apiKey = $api;
     }

@@ -18,7 +18,6 @@
 <script src="/js/ngDialog.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/css/ngDialog.min.css" />
 <link rel="stylesheet" href="/css/ngDialog-theme-default.css">
-<script src="/js/jquery.multisortable.js"></script>
 <div id="photocontrol">
 </div>
 <div ng-controller="GalleryCtrl" id="mainCtrl">
@@ -238,6 +237,7 @@ $(document).ready(function() {
                 <div style="height: 8px;"></div>
 
 				</center><div style="height: 8px;"></div>
+				<div id="photocontainer">
 				<div id="photoList">
                 <div ng-repeat="photo in photos" on-Finish-Render-Filters class="photos_wrapper" >
                         <div class="photos" id="photo{{ photo.id }}">
@@ -246,6 +246,7 @@ $(document).ready(function() {
                         </div>&nbsp;
                         <div class="commentaire" >{{photo.commentaire}}</div>
 				</div></div>
+			   </div>
 
 {% endverbatim %}
 {% else %}

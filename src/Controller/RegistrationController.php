@@ -43,6 +43,13 @@ class RegistrationController extends AbstractController
             $user->setPassword($passwordEncoder->encodePassword($user,$user->getPassword()));
             $user->setRole(json_encode(['ROLE_USER','ROLE_ADMIN']));
             $em->persist($user);
+
+            $user = new User();
+            $user->setUsername('ANONYMOUS');
+            $user->setIdPriv(0);
+            $em->persist($user);
+
+
             $em->flush();
             return $this->redirectToRoute('app_login');
         }

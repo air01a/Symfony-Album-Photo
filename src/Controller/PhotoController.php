@@ -71,10 +71,12 @@ class PhotoController extends AbstractFOSRestController
 
         $error=$fileHelper->storeImage($album, $photo, $uploadedFile->get('file'));
         $errorManager->manageError($error);
+
         if ($photo->getPath()==null)
             $em->remove($photo);
         else     
             $em->persist($photo);
+
         $em->flush();
         return $photo;
     }

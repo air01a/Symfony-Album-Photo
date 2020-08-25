@@ -636,7 +636,12 @@ angular.module('delr1', ['angular.img','ngDialog'])
 							$scope.getIdsOfImages(); 
 						}, //end update  
 					helper:'clone'
-				}); 
+				});
+
+			
+
+
+
 				$scope.showRights(id);
 			}
 
