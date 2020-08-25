@@ -179,6 +179,31 @@ class FileHelper
 
     }
 
+    public function getExif($album, $photo){
+        $directory=$this->appPath.'/'.$album->getPath();
+        try {
+            return exif_read_data($directory.'/800/'.$photo->getPath());
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+
+    public function getExifDate($exif) {
+        if (!is_array($exif))
+            return null;
+
+        if (array_key_exists('DateTimeOriginal',$exif)){
+            $dt = $exif['DateTimeOriginal'];
+            $tab = explode(' ',$dt);
+            $tab[0] = str_replace(':','-',$tab[0]);
+            $dt = $tab[0].' '.$tab[1];
+            //var_dump($dt);
+            return $dt;
+        }
+        return null;
+    }
+
     public function storeImage(Album $album, Photos $photo, $uploadedFile){
         $directory=$this->appPath.'/'.$album->getPath();
         $photo->setPath($uploadedFile[0]->getClientOriginalName());
@@ -190,6 +215,7 @@ class FileHelper
             $image = $this->createThumbnail($directory.'/800/'.$photo->getPath(),$ratio['x'],$ratio['y'],95);
             file_put_contents($directory.'/320/'.$photo->getPath(),$image);
         } catch(\Exception $e) {
+            var_dump($e->getMessage());
             $photo->setPath(null);
             return -1;
         }

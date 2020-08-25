@@ -91,6 +91,14 @@ class Album
      */
     private $youtube = '';
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="sorter", type="string", length=10, nullable=false, options={"default"="path"})
+     */
+    private $sorter = 'path';
+
+
     public $hasToBeZipped=false;
 
     public function getId() {
@@ -196,6 +204,15 @@ class Album
     public function getRights(){
         return $this->rights;
     }
+
+    public function setSorter($sorter){
+        $this->sorter=$sorter;
+    }
+
+    public function getSorter(){
+        return $this->sorter;
+    }
+
 
 }
     

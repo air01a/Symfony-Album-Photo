@@ -59,6 +59,42 @@ class Photos
      */
     private $commentaire;
 
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="exif", type="text", length=16777215, nullable=true)
+     */
+    private $exif;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="date_time", type="datetime", nullable=true)
+     */
+    private $dateTime;
+
+
+    public function getDateTime(){
+        return $this->dataTime;
+    }
+
+    public function setDateTime($date){
+        try {
+            $this->dateTime=new \DateTime($date);
+        } catch (\Exception $e) {
+            $this->dateTime=null;
+        }
+    }
+
+    public function getExif() {
+        return $this->exif;
+    }
+
+    public function setExif($exif) {
+        $this->exif=$exif;
+    }
+
     public function getAlbumId() {
         return $this->albumId;
     }

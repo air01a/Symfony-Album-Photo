@@ -565,10 +565,11 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 			// Manage albums modificaiton
 			$http.patch('/api/v1/albums/'+$scope.album.id, 
-						{'name':$scope.album.name,'date':$scope.album.date,'commentaire':$scope.album.commentaire,'country':$scope.album.country,'youtube':$scope.album.youtube})
+						{'name':$scope.album.name,'date':$scope.album.date,'commentaire':$scope.album.commentaire,'country':$scope.album.country,'youtube':$scope.album.youtube,'sorter':$scope.album.sorter})
 						.then(function(data, status, headers, config) {
 							$scope.inprogress=2;
 							$timeout(function () { $scope.inprogress=0 }, 3000);
+							$scope.actShowPhoto($scope.album.id);
 						},
 						function(data, status, headers, config) {
 							alert(data.error);

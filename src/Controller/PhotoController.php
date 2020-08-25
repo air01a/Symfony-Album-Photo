@@ -71,6 +71,11 @@ class PhotoController extends AbstractFOSRestController
 
         $error=$fileHelper->storeImage($album, $photo, $uploadedFile->get('file'));
         $errorManager->manageError($error);
+        $exif=$fileHelper->getExif($album,$photo);
+        if ($exif) {
+            $photo->setExif(json_encode($exif,1));
+            $photo->setDateTime($fileHelper->getExifDate($exif));
+        }
 
         if ($photo->getPath()==null)
             $em->remove($photo);
@@ -116,7 +121,7 @@ class PhotoController extends AbstractFOSRestController
         $this->denyAccessUnlessGranted('view', $album);
 
         $user = $this->getUser();
-        $Photos = $this->getDoctrine()->getRepository('App:Photos')->search($album->getId());
+        $Photos = $this->getDoctrine()->getRepository('App:Photos')->search($album->getId(),$album->getSorter());
         return $Photos;
 
     }

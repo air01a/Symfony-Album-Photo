@@ -211,6 +211,13 @@ $(document).ready(function() {
                         <button type="button" class="defaultbutton green" ng-click="managePublic(0)">Private</button>
                         {{ baseUrl }}/albumpublic/{{album.id}}?token={{album.id_pub}}
                 </div></p><p style="height: 20px">
+				<label class="alignedLabel">Sort album by : </label>
+				<select ng-model="album.sorter" style="float:left">
+					<option value="path">File-path</option>
+      				<option value="date_time">Exif-Date</option>
+        </select><div>
+		<div>
+		<label class="alignedLabel"><b>Right Management</b> </label>
 
 		<div class="right_wrapper">
 			<div ng-repeat="right in rights" class="right_box">
@@ -228,6 +235,7 @@ $(document).ready(function() {
             <p>or</p>
             <p><input type="button" value="Select File(s)" onClick="$('#selectfile').click()"></p>
             <input type="file" id="selectfile" multiple onChange="angular.element(this).scope().manageFileUpload(this.files)">
+		</div>
         </div>
     </div>
 </div>

@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityRepository;
 
 class PhotoRepository extends EntityRepository
 {
-    public function search($id)
+    public function search($id,$orderBy='path')
     {
         $userId=0;
 
@@ -14,8 +14,12 @@ class PhotoRepository extends EntityRepository
                          ->from('App:Photos', 'p')
                          ->where('p.albumId = ?1')
                          ->setParameter(1,$id)
-                         ->addOrderBy('p.orderInAlbum', 'ASC')
-                         ->addOrderBy('p.path', 'ASC');   
+                         ->addOrderBy('p.orderInAlbum', 'ASC');
+        if ($orderBy=='date_time'){
+            $qb->addOrderBy('p.dateTime','ASC');
+        }
+        else
+            $qb->addOrderBy('p.path', 'ASC');   
         return $qb->getQuery()->getResult();
     }
 
