@@ -47,6 +47,7 @@ class RegistrationController extends AbstractController
             $user = new User();
             $user->setUsername('ANONYMOUS');
             $user->setIdPriv(0);
+            $user->setPassword($passwordEncoder->encodePassword($user,bin2hex(random_bytes(25))));
             $em->persist($user);
 
 
