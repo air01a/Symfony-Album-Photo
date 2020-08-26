@@ -43,6 +43,9 @@ Options:
   stored_scroll_position = null;
 
   timer = null;
+  var zt ;
+
+
 
   first=0
   resizeImage = function() {
@@ -185,12 +188,32 @@ Options:
         resizeImage();
       }
       bindCurtainEvents();
+
+
+     zt = new ZingTouch.Region(document.body,false,false);
+		var ztElement = document.getElementById('jquery-fullsizable');
+		zt.bind(ztElement, 'swipe', function(e){
+			//Actions here
+			direction = Math.floor(e.detail.data[0].currentDirection);
+			if (direction<45 || direction>315)
+				prevImage(true);
+			if (direction>135 && direction<205)
+        nextImage(true);
+
+      if (direction>240 && direction<290)
+        closeViewer();
+      }, false);
+
+
+
       return $(document).trigger('fullsizable:opened', opening_selector);
     });
   };
 
   closeViewer = function() {
     autoPlay(false);
+    var ztElement = document.getElementById('jquery-fullsizable');
+    zt.unbind(ztElement);
     if (options.detach_id != null) {
       $('#' + options.detach_id).css('display', 'block');
       $(window).scrollTop(stored_scroll_position);

@@ -868,6 +868,20 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.countryMapping = countryMapping;
 		$scope.token=token;
 
+
+		
+		var zt = new ZingTouch.Region(document.body,false,false);
+		var myElement = document.getElementById('polaroid');
+		zt.bind(myElement, 'swipe', function(e){
+			//Actions here
+			direction = Math.floor(e.detail.data[0].currentDirection);
+			if (direction<45 || direction>315)
+				$scope.previousPage();
+			if (direction>135 && direction<205)
+				$scope.nextPage();
+		}, true);
+
+
 		$( "#datepicker" ).datepicker({
 			dateFormat: 'yy-mm-dd',
 			showOtherMonths: true,
