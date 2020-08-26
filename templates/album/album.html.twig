@@ -145,6 +145,7 @@ class AuthImg extends HTMLImageElement {
 				</button>
 				<button class="pagelink" ng-click="nextPage()" ng-show="(startGal+1)*galLimit<numAlbums">></button>
 			</p>
+			<center>
 	  		 <div style="text-align: center;margin-left:auto;margin-right:auto;" ng-repeat="album in albums">
 				<a href ng-click="actShowPhoto(album.id)">
 					<div class="photofigure">
@@ -154,6 +155,7 @@ class AuthImg extends HTMLImageElement {
 					</div>
 				</a>
           		</div>
+			</center>
 		</div><!--end polaroid-->
 			<p style="text-align:center">
 				<button class="pagelink" ng-click="previousPage()" ng-show="startGal!=0"><</button>

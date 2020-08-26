@@ -12,6 +12,8 @@
      <head>
      <title>Accueil</title>
      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
      <link rel="icon" href="/favicon/favicon.ico">
      <link rel="shortcut icon" href="/images/favicon.ico" />
      <link rel="stylesheet" href="/css/style.css">
@@ -40,11 +42,11 @@
 <!--==============================header=================================-->
          <header> 
                  <div id="fullsizewrapper" class="container_12">
-                        <div class="grid_12"> 
+                        <div class="grid_12">
                                 <div class="menu_block">
-
-                                        <nav  class="" >
-                                                <ul class="sf-menu">{% if app.user !=null and app.user.username!='ANONYMOUS' %}
+                                      <nav>
+                                            <a href="#" id="menu-icon"></a>
+                                                <ul>{% if app.user !=null and app.user.username!='ANONYMOUS' %}
                                                         {% for link in links %}
                                                         <li {% if app.request.attributes.get("_route") == link.route  %}class="current"{% endif %}><a href="{{  path(link.route) }}">{{ link.path }}</a></li>
                                                         {% endfor %}

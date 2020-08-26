@@ -40,6 +40,7 @@ class UpdatePhotoCommand extends Command
             if ($album==null) {
                 $output->writeln("Found photo without album:".$photo->getPath()." => Deleting");
                 $this->em->remove($photo);
+                $album = new Album();
             } else {    
                 $exif=$this->fileHelper->getExif($album,$photo);
                 $output->write("Found photo ".$photo->getPath());

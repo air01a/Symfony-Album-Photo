@@ -1,85 +1,92 @@
- 
-.menu_block  {
-	position: relative;
-	z-index: 999;
+nav {
+
 	float: right;
-	padding-top: 6px;
+	padding: 20px;	
 
 }
 
-nav>.sf-menu {
+#menu-icon {
+
+	display: hidden;
+	width: 40px;
+	height: 40px;
+	background: #4C8FEC url(/images/menu-icon.png) center;
 
 }
-nav{ position:relative;padding: 0px 0 0 0;}
-.sf-menu ul {position:absolute;top:-999px; display:none;/* left offset of submenus need to match (see below) */}
-.sf-menu li {float:left;position:relative; }
-.sf-menu>li {
-	position: relative;
+
+a:hover#menu-icon {
+
+	background-color: #444;
+	border-radius: 4px 4px 0 0;
+
+}
+
+ul {
+
+	list-style: none;
+
+}
+
+li {
+
+	display: inline-block;
 	float: left;
-
-}
-
-.sf-menu>li+li {
-	
-}
-
-
-.sf-menu>li>a{
-	font-size: 16px;
+	padding: 10px;
+	font-size:16px;
+	line-height: 16px;
 	font-family: 'Open Sans Condensed', sans-serif;
 	color: #fff;
-	display: block;
 	text-transform: uppercase;
-	position: relative;
-	line-height: 16px;
-	z-index: 999;
-	position: relative;
 	padding: 9px 20px 9px;
+
+
 }
 
-
-.sf-menu>li.sfHover>a, .sf-menu>li.current>a, .sf-menu>li:hover>a:hover {
+.current {
 	background-color: #CC0000;
 }
 
+/*MEDIA QUERY*/
+@media only screen and (max-width : 640px) {
 
+	header {
 
-/*================================>> 2 Level <<========================================*/
-.sf-menu li ul,.sf-menu li.sfHover>ul{
-	top:-28px;
-	left: 114px;
+		position: absolute;
 
-	width: 141px;
-	z-index: 999; 
-	padding-top: 28px;
-	padding-bottom: 23px;
-	background-color: #ffffff;
+	}
+
+	#menu-icon {
+
+		display:inline-block;
+
+	}
+
+	nav ul, nav:active ul { 
+
+		display: none;
+		position: absolute;
+		padding: 20px;
+		background: #000;
+		border: 5px solid #444;
+		right: 20px;
+		top: 60px;
+		width: 50%;
+		border-radius: 4px 0 4px 4px;
+
+	}
+
+	nav li {
+
+		text-align: center;
+		width: 100%;
+		padding: 10px 0;
+		margin: 0;
+
+	}
+
+	nav:hover ul {
+
+		display: block;
+
+	}
 }
-
-
-.sf-menu li ul li{
-	padding-left: 18px;
-	float: none !important; 
-	margin-bottom: 3px;
-
-
-}
-
-
-
-
-.sf-menu li ul li a{
-	text-transform: uppercase;
-	font: 16px/16px 'Dosis', sans-serif;
-;
-	position: relative;
-	color: #000;
-
-}
-
-.sf-menu li li a:hover, 
-.sf-menu li.sfHover li.sfHover>a {  
-	color: #ec0606;
-
-}
-

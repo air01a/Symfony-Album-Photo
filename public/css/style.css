@@ -417,7 +417,7 @@ footer {
 
 .photos_wrapper {
         display: inline-block;
-        width: 25%;
+        min-width: 25%;
         text-align: center;
         margin-left:auto;
         margin-right:auto;
