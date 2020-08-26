@@ -35,8 +35,9 @@ body {
 }
 
 .searchbox {
+	margin: 10px 10px 0 0;
+
 	text-align: right;
-	margin: auto;
 }
 
 
