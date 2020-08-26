@@ -23,6 +23,7 @@ figure, figcaption,figdate {
         margin-right: auto;
 	position:relative;
 	float: left;	
+	style="display: inline-block;"
 	width:200px;
 	margin:10px 20px;
 	padding: 6px 8px 10px 8px;

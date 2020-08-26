@@ -148,7 +148,7 @@ class AuthImg extends HTMLImageElement {
 			<center>
 	  		 <div style="display: inline-block;" ng-repeat="album in albums">
 				<a href ng-click="actShowPhoto(album.id)">
-					<div class="photofigure">
+					<div class="photofigure" >
 						<div class="photodate">{{ album.date }}</div>
 						<div class="center-cropped" style="display:block;"><img class="ngimg" http-src="/api/v1/albums/{{ album.id }}/photos/random?thumb=1" alt="#gal.caption#" /></div>
 					<div class="photocomment">{{ album.name }}</div>
