@@ -146,7 +146,7 @@ class AuthImg extends HTMLImageElement {
 				<button class="pagelink" ng-click="nextPage()" ng-show="(startGal+1)*galLimit<numAlbums">></button>
 			</p>
 			<center>
-	  		 <div style="text-align: center;margin-left:auto;margin-right:auto;" ng-repeat="album in albums">
+	  		 <div style="display: inline-block;" ng-repeat="album in albums">
 				<a href ng-click="actShowPhoto(album.id)">
 					<div class="photofigure">
 						<div class="photodate">{{ album.date }}</div>

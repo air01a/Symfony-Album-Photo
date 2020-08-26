@@ -75,6 +75,7 @@ body {
 
 .container_12 .grid_12 {
  /* width: 940px;*/
+ float: right;
 }
 
 /* `Prefix Extra Space >> 12 Columns
