@@ -14,7 +14,7 @@
 */
 
 body {
-  min-width: 960px;
+ /* min-width: 960px;*/
 }
 
 /* `Container
@@ -74,7 +74,7 @@ body {
 
 
 .container_12 .grid_12 {
-  width: 940px;
+ /* width: 940px;*/
 }
 
 /* `Prefix Extra Space >> 12 Columns
