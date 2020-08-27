@@ -38,7 +38,7 @@ token = "{{ token }}";
 <div id="wrapper" style="margin-right: auto; margin-left: auto; text-align:center">
 <div style="height: 10px"></div>
 <center>
-<div style="display: inline-flex"><div id="world-map" style="width: 800px; height: 400px"></div></div>
+<div style="display: inline-flex"><div id="world-map" style="width: 100px; height: 200px"></div></div>
 </center>
 </div>
   <script>
@@ -68,11 +68,15 @@ function showCountry(code) {
 <script>
 
 $(document).ready(function() {
+
       $.ajaxSetup({
         headers:{
           'Authorization': "bearer "+token
         }
       });
+
+      $('#world-map').css('width',$(window).width()*0.8);
+    $('#world-map').css('height',$(window).width()/1.6);
       $.get('/api/v1/country',function(data) {
       countryList=[];
       countryListColor={}
@@ -120,8 +124,8 @@ $(document).ready(function() {
 $(function() {
     $( "#dialog" ).dialog({
 	
-      height: 550,
-      width: 550,
+      height: $(window).height()*0.6,
+      width: $(window).width()*0.6,
       modal: false,
 	zIndex: 1000,
       autoOpen: false,
