@@ -200,8 +200,11 @@ Options:
 			if (direction>135 && direction<205)
         nextImage(true);
 
-      if (direction>240 && direction<290)
+      if (direction>60 && direction<120) {
+        (e.detail.events).forEach( _e => _e.originalEvent.preventDefault());
         closeViewer();
+      }
+        
       }, false);
 
 
