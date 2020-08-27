@@ -97,7 +97,7 @@ class UpdatePhotoCommand extends Command
         unset($stat["total"]);
         arsort($stat);
         foreach($stat as $focale=>$percent)
-            $output->writeln($focale." mm : ".strval(round($percent/$total,2)*100).' %');
+            $output->writeln($focale." mm : ".strval(round($percent/$total,4)*100).' %');
         return Command::SUCCESS;
     }
 
