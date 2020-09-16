@@ -52,7 +52,7 @@
 
 .videoNav ul li img{
 	max-width: 90px;
-	width: 20%;
+	width: 100%;
 	height: auto;
 	position: relative;
 	border: 4px solid transparent;
