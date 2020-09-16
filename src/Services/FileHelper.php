@@ -103,6 +103,35 @@ class FileHelper
         return $image;
     }
 
+
+    public function createDiapo($image_name,$width,$height) {
+        $mime = getimagesize($image_name);
+        $src_img = imagecreatefromjpeg($image_name);
+
+        $old_x          =   imageSX($src_img);
+        $old_y          =   imageSY($src_img);
+
+        $dst_img        =   ImageCreateTrueColor($width,$height);
+        $white = imagecolorallocate($dst_img, 255, 255, 255);
+        imagefill($dst_img, 0, 0, $white);
+
+        $ratio=$this->bestRatio($image_name,$width,$height);
+
+        $x=0;$y=0;
+        if ($ratio['x']<$width)
+            $x=($width-$ratio['x'])/2;
+        if ($ratio['y']<$height)
+            $y=($height-$ratio['y'])/2;
+        imagecopyresampled($dst_img,$src_img,$x,$y,0,0,$ratio['x'],$ratio['y'],$old_x,$old_y); 
+        ob_start();
+        imagejpeg($dst_img,NULL,95);
+        $image = ob_get_clean();
+
+        imagedestroy($dst_img); 
+        imagedestroy($src_img);
+        return $image;
+    }
+
     public function createThumbnail($image_name,$new_width,$new_height,$quality=85)
     {
 
