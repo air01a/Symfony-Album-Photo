@@ -176,13 +176,16 @@ a:hover {
 
 .extra_wrapper {
 	overflow: hidden;
+	margin-bottom: 20px;
 }
 .clear {
 	float: none !important;
 	clear: both;
 }
 
-
+.zoom:hover {
+	transform:scale(1.3);
+}
 /*header*/
 
 header {
@@ -548,3 +551,29 @@ footer {
     width:100px; /* Attention : prenez une largeur suffisamment grande */
     float:left;
 }
+
+.tooltip {
+	position: relative;
+  }
+  
+  /* Tooltip text */
+  .tooltip .tooltiptext {
+	visibility: hidden;
+	width: 120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	padding: 5px 0;
+	border-radius: 6px;
+   
+	/* Position the tooltip text - see examples below! */
+	position: absolute;
+	z-index: 1;
+	top: 50px;
+	left: 50px;
+  }
+  
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .tooltip:hover .tooltiptext {
+	visibility: visible;
+  }

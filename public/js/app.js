@@ -654,7 +654,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 							.then(function(res){
 								$scope.idAlbum=id;
 								$scope.photos=res.data;
-								$('#videoimg').effect( "shake");
 							});	
 						if ($scope.videotab!=null){
 							$scope.videotabshow=true;
@@ -673,17 +672,10 @@ angular.module('delr1', ['angular.img','ngDialog'])
 							$("#videojukebox").hide();
 						}
 	        		});
-				setTimeout( "$('#backimg').effect('shake');",1000 );
-				setTimeout( "$('#zipimg').effect('shake');",2000 );
 				if ($scope.album == undefined)
 					return;
 
-				if ($scope.album.video)
-					setTimeout( "$('#videoimg').effect('shake');",4000 );
-				if ($scope.videotabshow)
-					setTimeout( "$('#videoimg2').effect('shake');",4000 );
-				setTimeout( "$('#diap').effect('shake');",3000);
-
+				
     	};
 		
 

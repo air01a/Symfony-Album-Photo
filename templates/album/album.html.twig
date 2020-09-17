@@ -197,7 +197,7 @@ $(document).ready(function() {
 {% verbatim %}
 	<div ng-show="showphoto" style="text-align:center;margin-left: auto; margin-right: auto">
 				<h3 class="pb1"><span class="col1">Admin</span></h3>
-				<a href ng-click="returnToGal()"><img class="img_inner fleft" src="images/g1.png" width="40px"></a>
+				<a href ng-click="returnToGal()"><img class="img_inner fleft" src="images/g1.png" style="margin-top: 7px;width: 40px;height:40px"></a>
 				<div style='float:right'><button type="button" class="defaultbutton red" ng-click="deleteAlbum()">Delete Album</button></div>
                                 <div class="extra_wrapper" style="text-align: left">
 
@@ -268,16 +268,16 @@ $(document).ready(function() {
 {% endverbatim %}
 
 {% if app.user !=null and app.user.username!='ANONYMOUS' %}		
-		<a href ng-click="returnToGal()"><img id="backimg" class="img_inner fleft" src="/images/g1.png" width="40px"></a>
+		<div class="tooltip"><a href ng-click="returnToGal()"><img id="backimg" class="img_inner fleft zoom" src="/images/g1.png" style="margin-top: 7px;width: 40px;height:40px"></a><span class="tooltiptext">Return to album list</span></div>
 {% endif %}
 
 {% verbatim %}
 	</p>
-		<a href="/albums/{{album.id}}/zip"><img class="img_inner fleft" src="/images/zip.png" height="40px" id="zipimg"></a>
-		<a href ng-click="diaporama()"><img class="img_innet fleft" src="/images/play_file.png"  height="40px" id="diap">
-		<a href ng-click="showVideo()"><img class="img_inner fleft" src="/images/video_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a>
-		<a href ng-click="goToVideo()"><img class="img_inner fleft" src="/images/video_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a>
-		<div class="extra_wrapper" style="text-align: left">
+		<div class="tooltip"><a href="/albums/{{album.id}}/zip"><img class="img_inner fleft zoom" src="/images/zip2.png" height="40px" id="zipimg"></a><span class="tooltiptext">Download ZIP</span></div>
+		<div class="tooltip"><a href ng-click="diaporama()"><img class="img_innet fleft zoom" src="/images/diapo.png"  height="40px" id="diap"><span class="tooltiptext">SlideShow</span></div>
+		<div class="tooltip"><a href ng-click="showVideo()"><img class="img_inner fleft zoom " src="/images/play_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a><span class="tooltiptext">Go to video</span></div>
+		<div class="tooltip"><a href ng-click="goToVideo()"><img class="img_inner fleft zoom" src="/images/play_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a><span class="tooltiptext">Go to video</span></div>
+		<div class="extra_wrapper right_wrapper" style="text-align: left">
 			<b>{{ album.date }} </b><br /> {{ album.commentaire }}
                 </p></div>
 
