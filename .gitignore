@@ -13,6 +13,7 @@ config/jwt/*
 /public/imagesperso
 /public/favicon
 /templates/slideshow/slideshow.html
+/templates/link/link.html
 ###< symfony/framework-bundle ###
 
 ###> lexik/jwt-authentication-bundle ###

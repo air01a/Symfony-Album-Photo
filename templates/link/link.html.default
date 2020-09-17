@@ -1,0 +1,8 @@
+    <li class="lnk">
+            <a href="http://www.google.com/" target="_blank">
+
+      <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" width="200px">
+      <h6>www.google.com</h6>
+      <p>Who doesn't know Google ? </p>
+        </a>
+    </li>

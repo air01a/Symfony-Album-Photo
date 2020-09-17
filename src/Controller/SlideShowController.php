@@ -18,9 +18,8 @@ class SlideShowController extends AbstractController
      *
      * @Route("/", name="slideshow")
      */
-    public function slideshow(Request $request) 
+    public function slideshow() 
     {
-        var_dump($request->getLocale());
         $DIRDIAPO='images/diapo/';
         $images=scandir($DIRDIAPO);
         shuffle($images);

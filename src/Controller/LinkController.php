@@ -15,9 +15,16 @@ class LinkController extends AbstractController
      */
     public function link() 
     {
-       
-        return $this->render('link.html.twig', [
-            'current'=>'link'
+        $dir = \dirname(__DIR__).'/../templates/';
+        if (is_file($dir.'/link/link.html'))
+            $content=file_get_contents($dir.'/link/link.html');
+        else
+            $content=file_get_contents($dir.'/link/link.html.default');
+
+
+        return $this->render('/link/link.html.twig', [
+            'current'=>'link',
+            'content'=>$content
         ]);
     }
 }
