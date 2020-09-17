@@ -7,6 +7,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Services\FileHelper;
 
+
+use Symfony\Component\HttpFoundation\Request;
+
 class SlideShowController extends AbstractController
 {
      /**
@@ -15,8 +18,9 @@ class SlideShowController extends AbstractController
      *
      * @Route("/", name="slideshow")
      */
-    public function slideshow() 
+    public function slideshow(Request $request) 
     {
+        var_dump($request->getLocale());
         $DIRDIAPO='images/diapo/';
         $images=scandir($DIRDIAPO);
         shuffle($images);

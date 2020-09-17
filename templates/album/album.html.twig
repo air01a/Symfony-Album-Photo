@@ -128,12 +128,12 @@ class AuthImg extends HTMLImageElement {
 	<div><button type="button" class="defaultbutton blue" ng-click="manageUser()">Manage User<br /></button><button type="button" class="defaultbutton green" ng-click="createAlbum()">Create Album<br /></button></div>
     {% else %}
 		<h3>
-			 <span class="col1">Nos Photos</span>
+			 <span class="col1">{% trans %}Our Photos{% endtrans %}</span>
 		</h3>
 	{% endif %}
 		<div class="searchbox">
-			Recherche : 
-			<input type="search" ng-model="search" ng-change="updatesearch(search)" placeholder="3 lettres min">
+			{% trans %}Search{% endtrans %} : 
+			<input type="search" ng-model="search" ng-change="updatesearch(search)" placeholder="{% trans %}3 letters min{% endtrans %}">
 		</div>
 {% verbatim %}
 
@@ -268,16 +268,17 @@ $(document).ready(function() {
 {% endverbatim %}
 
 {% if app.user !=null and app.user.username!='ANONYMOUS' %}		
-		<div class="tooltip"><a href ng-click="returnToGal()"><img id="backimg" class="img_inner fleft zoom" src="/images/g1.png" style="margin-top: 7px;width: 40px;height:40px"></a><span class="tooltiptext">Return to album list</span></div>
+		<div class="tooltip"><a href ng-click="returnToGal()"><img id="backimg" class="img_inner fleft zoom" src="/images/g1.png" style="margin-top: 7px;width: 40px;height:40px"></a><span class="tooltiptext">{% trans %}Return to album list{% endtrans %}</span></div>
 {% endif %}
 
-{% verbatim %}
 	</p>
-		<div class="tooltip"><a href="/albums/{{album.id}}/zip"><img class="img_inner fleft zoom" src="/images/zip2.png" height="40px" id="zipimg"></a><span class="tooltiptext">Download ZIP</span></div>
-		<div class="tooltip"><a href ng-click="diaporama()"><img class="img_innet fleft zoom" src="/images/diapo.png"  height="40px" id="diap"><span class="tooltiptext">SlideShow</span></div>
-		<div class="tooltip"><a href ng-click="showVideo()"><img class="img_inner fleft zoom " src="/images/play_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a><span class="tooltiptext">Go to video</span></div>
-		<div class="tooltip"><a href ng-click="goToVideo()"><img class="img_inner fleft zoom" src="/images/play_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a><span class="tooltiptext">Go to video</span></div>
+		<div class="tooltip">	{% verbatim %}<a href="/albums/{{album.id}}/zip">{% endverbatim %}<img class="img_inner fleft zoom" src="/images/zip2.png" height="40px" id="zipimg"></a><span class="tooltiptext">{% trans %}Download ZIP{% endtrans %}</span></div>
+		<div class="tooltip"><a href ng-click="diaporama()"><img class="img_innet fleft zoom" src="/images/diapo.png"  height="40px" id="diap"><span class="tooltiptext">{% trans %}SlideShow{% endtrans %}</span></div>
+		<div class="tooltip"><a href ng-click="showVideo()"><img class="img_inner fleft zoom " src="/images/play_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a><span class="tooltiptext">{% trans %}Go to video{% endtrans %}</span></div>
+		<div class="tooltip"><a href ng-click="goToVideo()"><img class="img_inner fleft zoom" src="/images/play_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a><span class="tooltiptext">{% trans %}Go to video{% endtrans %}</span></div>
 		<div class="extra_wrapper right_wrapper" style="text-align: left">
+	{% verbatim %}
+
 			<b>{{ album.date }} </b><br /> {{ album.commentaire }}
                 </p></div>
 

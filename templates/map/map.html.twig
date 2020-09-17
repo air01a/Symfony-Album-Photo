@@ -18,7 +18,6 @@
 <script>
 token = "{{ token }}";
 </script>
-{% verbatim %}
 
 <style>
       #map-canvas {
@@ -31,16 +30,17 @@ token = "{{ token }}";
 
 <div style="height: 10px"></div>
 
-<h3><span class="col1">Les pays visit&eacute;s</span></h3>
-<div>Une carte repr&eacute;sentant les pays ou nous sommes all&eacute;s, et les photographies associ&eacute;es</div>
-<div style="display: flex"><div style="background: #CC0000;width:20px;height: 14px;"></div>&nbsp;Galerie Accessible</div>
-<div style="display: flex"><div style="background: #FF6633;width:20px;height: 14px;"></div>&nbsp;Galerie non accessible</div>
+<h3><span class="col1">{% trans %}Visited countries{% endtrans %}</span></h3>
+<div>{% trans %}A map with all the countries we have visited, and the associated photos{% endtrans %}</div>
+<div style="display: flex"><div style="background: #CC0000;width:20px;height: 14px;"></div>&nbsp;{% trans %}Accessible album{% endtrans %}</div>
+<div style="display: flex"><div style="background: #FF6633;width:20px;height: 14px;"></div>&nbsp;{% trans %}Not Accessible album{% endtrans %}</div>
 <div id="wrapper" style="margin-right: auto; margin-left: auto; text-align:center">
 <div style="height: 10px"></div>
 <center>
 <div style="display: inline-flex"><div id="world-map" style="width: 100px; height: 200px"></div></div>
 </center>
 </div>
+
   <script>
 
 countryList=[];
@@ -55,7 +55,7 @@ function showCountry(code) {
         if (countryMap[code]==0)
                 return 0;
 
-	$( "#dialog").html("<b>Cliquez pour acc&egrave;der a la galerie :</b><br /><br />")
+	$( "#dialog").html("<b>{% trans %}Click to go to album{% endtrans %} :</b><br /><br />")
 	$( "#dialog" ).dialog( "open" );
 	$.get("api/v1/country/"+code,function(data){
 		var arrayLength = data.length;
@@ -105,7 +105,7 @@ $(document).ready(function() {
       		  	    //e.preventDefault();
 	        	    return true;
         		}else {
-				label.html('<img src="/images/countryflag/' + code.toString() + '.png" /> ' + label.html() + '<hr noshade="noshade" style="height: 1px"/>' + 'Cliquez pour voir la galerie');
+				label.html('<img src="/images/countryflag/' + code.toString() + '.png" /> ' + label.html() + '<hr noshade="noshade" style="height: 1px"/>' + '{% trans %}Click to go to album{% endtrans %}');
 			}
 		},
         	focusOn: {
@@ -141,8 +141,7 @@ $(function() {
 
   });
   </script>
-<div id="dialog" title="Liste des galeries du pays">
+<div id="dialog" title="{% trans %}List of countrie's album{% endtrans %}">
 </div>
-{% endverbatim %}
 
 {% endblock %}

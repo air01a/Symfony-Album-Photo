@@ -1,9 +1,9 @@
 {%  
   set links = [
-    { "path":'Accueil',"route":"slideshow"},
-    { "path":'Photos',"route":"albumview"},
-    { "path":'Map',"route":"map"},
-    { "path":'Liens',"route":"getLink"}
+    { "path":'home',"route":"slideshow"},
+    { "path":'photos',"route":"albumview"},
+    { "path":'map',"route":"map"},
+    { "path":'links',"route":"getLink"}
   ]
 %}
 
@@ -48,13 +48,13 @@
                                             <a href="#" id="menu-icon"></a>
                                                 <ul>{% if app.user !=null and app.user.username!='ANONYMOUS' %}
                                                         {% for link in links %}
-                                                        <li {% if app.request.attributes.get("_route") == link.route  %}class="current"{% endif %}><a href="{{  path(link.route) }}">{{ link.path }}</a></li>
+                                                        <li {% if app.request.attributes.get("_route") == link.route  %}class="current"{% endif %}><a href="{{  path(link.route) }}">{{ link.path|trans }}</a></li>
                                                         {% endfor %}
                                                         {%  if is_granted('ROLE_ADMIN') %}
                                                         <li {% if app.request.attributes.get("_route") == 'adminview' %} class="current"{% endif %}><a href="{{ 'admin' }}">Admin</a></li>
                                                         {% endif %}
                                                         {% endif %}
-                                                         <li><a href="/logout">{% if app.user !=null and app.user.username!='ANONYMOUS' %}Quitter{% else %}Login{% endif %}</a></li>
+                                                         <li><a href="/logout">{% if app.user !=null and app.user.username!='ANONYMOUS' %}{% trans %}quit{% endtrans %}{% else %}Login{% endif %}</a></li>
                             
                                                </ul>
                                         </nav>      

@@ -14,7 +14,7 @@
 {% block body %}
 <div id="login">    
     <div id="triangle"></div>
-      <h1>Connexion</h1>
+      <h1>{% trans %}Authenticate{% endtrans %}</h1>
 <form method="post" id="auth">
     {# If there's any error, display it to the user #}
     {% if error %}
@@ -30,7 +30,7 @@
     {# CSRF Token Input #}
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
 
-    <input type="submit" value="connexion" />
+    <input type="submit" value="{% trans %}Authenticate{% endtrans %}" />
 </form>
 </div>
 {% endblock %}
