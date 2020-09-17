@@ -59,3 +59,44 @@ Configure your Web server to serve the directory
 # ----------------------
 ![Frontend](https://github.com/air01a/Symfony-Album-Photo/blob/master/doc/images/Screenshot%202020-09-17%20at%2010.36.55.png?raw=true)
 # ----------------------
+
+
+# API
+
+Login
+```
+POST /api/login_check
+   parameters : {'username'='user','password'='password'}
+   return {'token'=''} : JWT Token for further authentication
+```
+
+The token must be passed through HTTP HEADER "Authorization: Bearer TOKEN"
+
+Get album list:
+```
+GET /api/v1/albums
+```
+
+Get album:
+```
+GET /api/v1/albums/{id}
+```
+
+Get photos in album:
+```
+GET /api/v1/albums/{id}/photos
+```
+
+Get a photo:
+```
+GET /api/v1/albums/{id}/photos/{id}
+```
+
+Download a photo:
+```
+GET /api/v1/albums/{id}/photos/{id}/download
+   params size=1200*700 : width and height of the requested image (default 1200*700)
+          thumb=1|0 : image thumbnail
+```
+
+...
