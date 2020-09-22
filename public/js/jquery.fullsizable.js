@@ -38,6 +38,8 @@ Options:
 
   current_image = 0;
 
+  oldX = 0;
+  oldY = 0;
   options = null;
 
   stored_scroll_position = null;
@@ -50,6 +52,21 @@ Options:
   first=0
   resizeImage = function() {
     var image, _ref;
+    if (this.oldX==0 || this.oldY==0) {
+      this.oldY=$(window).height();
+      this.oldX=$(window).width();
+    }
+
+    windowHeight=$(window).height()
+    windowWidth=$(window).width()
+
+    if (Math.abs((windowHeight-this.oldY))>0.10*this.oldY || Math.abs((windowWidth-this.oldX))>0.10*this.oldX) {
+      this.oldY=windowHeight;
+      this.oldX=windowWidth;
+
+
+      this.reloadOnResize();
+    }
     image = images[current_image];
     if ((_ref = image.ratio) == null) {
 
@@ -60,19 +77,23 @@ Options:
     
     scale=1;
 
-    scaleY=$(window).height()/height;
-    scaleX=$(window).width()/width;
+    scaleY=windowHeight/height;
+    scaleX=windowWidth/width;
+
     
+
     if (!(scaleY>1&&scaleX>1)) {
         if (scaleY<scaleX)
           scale=scaleY;
         else
           scale=scaleX;
     }
-    console.log("scale: "+scale)
     $(image).width(width*scale);
     $(image).height(height*scale);
     
+
+
+
     return $(image).css('margin-top', ($(window).height() - height*scale) / 2);
 
   };
@@ -152,12 +173,33 @@ Options:
         });
 	resizeImage();
         this.loaded = true;
-
         return preloadImage(direction);
       };
-      return image.src = image.buffer_src;
+      return image.src = image.buffer_src+"&size="+Math.floor($(window).width()*0.95)+'x'+Math.floor($(window).height()*0.95);
     }
   };
+
+
+
+
+
+  reloadOnResize = function() {
+    clearTimeout(window.resizedFinished);
+
+    window.resizedFinished = setTimeout(function(){
+  
+        images[current_image].src=images[current_image].buffer_src+"&size="+Math.floor($(window).width()*0.95)+'x'+Math.floor($(window).height()*0.95);
+        $(image_holder_id).html(images[current_image]);
+
+        for (_i = 0, _len = images.length; _i < _len; _i++) {
+          image = images[_i];
+          if (image.src!='' && i!=current_image)
+          {
+            image.src=image.buffer_src+"&size="+Math.floor($(window).width()*0.95)+'x'+Math.floor($(window).height()*0.95);
+          }
+        }},550);
+
+  }
 
   preloadImage = function(direction) {
     var preload_image;
@@ -173,7 +215,7 @@ Options:
       return this.loaded = true;
     };
     if (preload_image.src === '') {
-      return preload_image.src = preload_image.buffer_src;
+      return preload_image.src = preload_image.buffer_src+"&size="+Math.floor($(window).width()*0.95)+'x'+Math.floor($(window).height()*0.95);
     }
   };
 
@@ -238,7 +280,7 @@ Options:
       
       var image;
       image = new Image;
-      image.buffer_src = $(this).attr('href')+"&size="+Math.floor($(window).width()*0.95)+'x'+Math.floor($(window).height()*0.95);
+      image.buffer_src = $(this).attr('href');
       image.index = images.length;
       image.id=image.index;
       image.alt=$(this).attr('alt');
@@ -277,7 +319,6 @@ Options:
 
 			var d = new Date();
 			var n = d.getTime();
-			console.log("Add timeout activate==true : "+n);
 
 			 setTimeout(function() {
                                         if (options.autoPlay)
@@ -300,7 +341,6 @@ Options:
 				var d = new Date();
 	                        var n = d.getTime();
 
-				console.log("Add timeout activate==null :"+n);
 				setTimeout(function() { 
 					if (options.autoPlay) 
 						nextImage(true);
@@ -337,7 +377,6 @@ Options:
      if (first==1) {
      	$(document).on('click', '#fullsized_go_next', function(e) {
      	//$('#fullsized_go_next').on('click',function(e) {
-		console.log('click next')
 		e.preventDefault();
         	e.stopPropagation();
 		autoPlay(false);
