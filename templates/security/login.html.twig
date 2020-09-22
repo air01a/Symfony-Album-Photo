@@ -24,10 +24,10 @@
     {% endif %}
 
     {# Email Input #}
-    <input type="username" value="{{ last_username }}" name="username" id="inputUsername"  placeholder="Username" required autofocus>
+    <input type="username" autocomplete="section-password username" value="{{ last_username }}" name="username" id="inputUsername"  placeholder="Username" required autofocus>
     
     {# Password Input #}
-    <input type="password" name="password" id="inputPassword" placeholder="Password" required>
+    <input type="password" autocomplete="section-password password" name="password" id="inputPassword" placeholder="Password" required>
     
     {# CSRF Token Input #}
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
