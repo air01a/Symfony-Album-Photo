@@ -240,7 +240,7 @@ class FileHelper
           //  return -3;
         try {
             $file = $uploadedFile[0]->move($directory.'/800/', $photo->getPath());
-            $ratio=$this->bestRatioMini($file,300,300);
+            $ratio=$this->bestRatioMini($file,450,450);
             $image = $this->createThumbnail($directory.'/800/'.$photo->getPath(),$ratio['x'],$ratio['y'],95);
             file_put_contents($directory.'/320/'.$photo->getPath(),$image);
         } catch(\Exception $e) {
