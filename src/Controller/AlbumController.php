@@ -13,7 +13,7 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 use App\Representation\Albums;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\BinaryFileRespons;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AlbumController extends AbstractFOSRestController
 {

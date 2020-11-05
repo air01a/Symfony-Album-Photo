@@ -18,7 +18,9 @@ abstract class AbstractRepository extends EntityRepository
         $pager = new Pagerfanta(new QueryAdapter($qb));
         $pager->setMaxPerPage((int) $limit);
         $currentPage = json_decode(base64_decode($page),true);
-        $page = ceil($currentPage["page"]*$currentPage["limit"] / $limit);
+        $page=0;
+        if ($currentPage)
+            $page = ceil($currentPage["page"]*$currentPage["limit"] / $limit);
         if ($page<1)
             $page=1;
         $pager->setCurrentPage($page);
