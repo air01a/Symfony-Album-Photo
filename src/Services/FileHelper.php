@@ -387,7 +387,7 @@ class FileHelper
         }
         
         $zip->close();
-        return file_get_contents($archive);
+        return $archive;
        // return $this->deleteZipTask($path);
 
     }

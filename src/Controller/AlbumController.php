@@ -13,6 +13,7 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 use App\Representation\Albums;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileRespons;
 
 class AlbumController extends AbstractFOSRestController
 {
@@ -154,11 +155,11 @@ class AlbumController extends AbstractFOSRestController
         $zip = $fileHelper->zip($album->getPath());
 
         
-        $headers = array(
-            'Content-Type'     => 'application/zip',
-            'Content-Disposition' => 'inline; filename="photos'.strval($album->getId()).'.zip"');
-        return new Response($zip, 200, $headers);
-
+        //$headers = array(
+        //    'Content-Type'     => 'application/zip',
+        //    'Content-Disposition' => 'inline; filename="photos'.strval($album->getId()).'.zip"');
+        //return new Response($zip, 200, $headers);
+        return new BinaryFileResponse($zip);
     }
 
 
