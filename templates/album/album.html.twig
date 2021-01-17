@@ -236,8 +236,9 @@ $(document).ready(function() {
         <div id="drag_upload_file">
             <p>Drop file(s) here</p>
             <p>or</p>
-            <p><input type="button" value="Select File(s)" onClick="$('#selectfile').click()"></p>
-            <input type="file" id="selectfile" multiple onChange="angular.element(this).scope().manageFileUpload(this.files)">
+
+
+			<input type="file" multiple="Yes" value="Select File(s)" onchange="angular.element(this).scope().manageFileUpload(this.files)">
 		</div>
         </div>
     </div>
