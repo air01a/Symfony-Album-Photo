@@ -72,6 +72,11 @@ class FileHelper
         return array('x'=>$thumb_w,'y'=>$thumb_h);
     }
 
+    public function imageFixOrientation(&$image, $filename) {
+        $image = imagerotate($image, array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filename)['Orientation'] ?: 0], 0);
+    } 
+
+
     public function getPhotoFile(Album $album,Photos $photo,int $thumb,$win){
        ($thumb==1) ? $size="/320/" : $size="/800/";
        // $size="/320/";
@@ -80,6 +85,7 @@ class FileHelper
         {
             if ($thumb==1)
                 $image = file_get_contents($photoFile);
+
             else {
                 $x=1000;
                 $y=700;
@@ -94,8 +100,10 @@ class FileHelper
                 }
 
                 $ratio=$this->bestRatio($photoFile,$x,$y);
+                // Some smartphone correct the orientation of the picture with an exiv, so manage it
                 $image=$this->createThumbnail($photoFile,$ratio['x'],$ratio['y']);
             }
+
         } else {
             // A corriger
             $image = file_get_contents(\dirname(__DIR__).'/../public/images/notfound.jpeg');
@@ -152,6 +160,7 @@ class FileHelper
         $dst_img        =   ImageCreateTrueColor($new_width,$new_height);
 
         imagecopyresampled($dst_img,$src_img,0,0,0,0,$new_width,$new_height,$old_x,$old_y); 
+        $this->imageFixOrientation($dst_img,$image_name);
 
 
         // New save location
