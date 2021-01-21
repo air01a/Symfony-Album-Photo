@@ -47,11 +47,7 @@
   <span id="countrycontent" ng-repeat="country in countryMapping | orderBy:'code'"><a href ng-click="album.country=country.name;closeThisDialog('Some value')">{{country.code}} : {{country.name}}</a><br /></span>
   </div>
 </script>
-<script type="text/ng-template" id="uploadid">
-    <div ng-repeat="(key,value) in upload" class="photos_wrapper">
-		<div class="text-color: blue">{{ key }}</div><div class="text-color: green;">{{ value }}</div><BR />
-	</div>
-</script>
+
 
 <script type="text/ng-template" id="userselection">
   <div style="overflow : scroll;height: 400px;">
@@ -81,8 +77,11 @@
 
 <script type="text/ng-template" id="uploadid">
     <div ng-repeat="(key,value) in upload" class="photos_wrapper">
-		<div class="text-color: blue">{{ key }}</div><div class="text-color: green;">{{ value }}</div><BR />
+			<div style="background: #3288e6;color: white;" ng-if="value!='Error'">{{ key }}</div>
+			<div style="background: red;color: white;" ng-if="value=='Error'">{{ key }}</div>
+			<div class="text-color: green;">{{ value }}</div><BR />
 	</div>
+		
 </script>
 
 

@@ -99,7 +99,6 @@ class Album
     private $sorter = 'path';
 
 
-    public $hasToBeZipped=false;
 
     public function getId() {
         return $this->id;

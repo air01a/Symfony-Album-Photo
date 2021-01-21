@@ -105,7 +105,6 @@ class AlbumController extends AbstractFOSRestController
     public function getAction(Album $album,FileHelper $fileHelper)
     {
         $this->denyAccessUnlessGranted('view', $album);
-        $album->hasToBeZipped=$fileHelper->hasToBeZipped($album->getPath());
         return $album;
     }
 
@@ -128,12 +127,13 @@ class AlbumController extends AbstractFOSRestController
         foreach($album->getRights() as $right)
             $em->remove($right);
 
-
-        if (strlen($album->getPath())>5)
-            if (!$fileHelper->deleteDir($album->getPath())) 
-                return 'error="deleting file"';
+        $path = $album->getPath();
+        
         $em->remove($album);
         $em->flush();
+        if (strlen($path)>5)
+            if (!$fileHelper->deleteDir($path)) 
+                return '{"error":"deleting file"}';
     }
 
 

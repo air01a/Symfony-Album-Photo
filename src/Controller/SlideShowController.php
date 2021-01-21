@@ -5,7 +5,7 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Services\FileHelper;
+use App\Services\PhotoHelper;
 
 
 use Symfony\Component\HttpFoundation\Request;
@@ -55,11 +55,11 @@ class SlideShowController extends AbstractController
      * @Route("/images/diapo/{slideshow}", name="slideshow_images")
      * requirements = {"slideshow"="[a-zA-Z0-9_\-]+"}
      */
-    public function slideshowImage($slideshow,FileHelper $fileHelper) {
+    public function slideshowImage($slideshow,PhotoHelper $photoHelper) {
         $DIRDIAPO='images/diapo/';
         $image = basename(str_replace('+','.',$slideshow));
 
-        $returnStream = $fileHelper->createDiapo($DIRDIAPO.$image,550,400);
+        $returnStream = $photoHelper->createDiapo($DIRDIAPO.$image,550,400);
 
         $headers = array(
             'Content-Type'     => 'image/jpeg',

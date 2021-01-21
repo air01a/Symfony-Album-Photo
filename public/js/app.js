@@ -430,7 +430,21 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.manageFileUpload = function(file_obj) {
 			if(file_obj != undefined) {
 				let album = $scope.album.id;
-				ngDialog.open({ template: 'uploadid',className: 'ngdialog-theme-default',scope:$scope });
+				uploadPopup=ngDialog.open({ 
+					template: 'uploadid',
+					
+					scope:$scope,
+					//closeByDocument:false,
+					preCloseCallback: function(value) {
+						if ($scope.uploadInProgress==0)
+							return true;
+						if (confirm('Are you sure you want to close, upload is in progress')) {
+							return true;
+						}
+						return false;
+					},
+					className: 'ngdialog-theme-default'
+				 });
 				$scope.uploadInProgress=0;
 				$scope.upload={};
 				$scope.lockupload=1;
@@ -447,8 +461,6 @@ angular.module('delr1', ['angular.img','ngDialog'])
 					$scope.uploadOneFile(file_obj,album,i,limit);
 					i+=step;
 				}
-				
-				
 				$('#selectfile').val('');
 			}
 		};
@@ -639,10 +651,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 					helper:'clone'
 				});
 
-			
-
-
-
+		
 				$scope.showRights(id);
 			}
 

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Album;
 use App\Entity\Photos;
 use App\Services\FileHelper;
+use App\Services\PhotoHelper;
 use App\Services\ErrorHelper;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -58,7 +59,7 @@ class PhotoController extends AbstractFOSRestController
      * @ParamConverter("photo", options={"id" = "idPhoto"})
      * @Rest\View
      */
-    public function uploadAction(Album $album, Photos $photo, FileHelper $fileHelper,Request $request,ErrorHelper $errorManager)
+    public function uploadAction(Album $album, Photos $photo, PhotoHelper $photoHelper,Request $request,ErrorHelper $errorManager)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 
@@ -69,12 +70,12 @@ class PhotoController extends AbstractFOSRestController
         $em = $this->getDoctrine()->getManager();
 
 
-        $error=$fileHelper->storeImage($album, $photo, $uploadedFile->get('file'));
-        $errorManager->manageError($error);
-        $exif=$fileHelper->getExif($album,$photo);
+        $error=$photoHelper->storeImage($album, $photo, $uploadedFile->get('file'));
+        
+        $exif=$photoHelper->getExif($album,$photo);
         if ($exif) {
             $photo->setExif(json_encode($exif,1));
-            $photo->setDateTime($fileHelper->getExifDate($exif));
+            $photo->setDateTime($photoHelper->getExifDate($exif));
         }
 
         if ($photo->getPath()==null)
@@ -83,6 +84,7 @@ class PhotoController extends AbstractFOSRestController
             $em->persist($photo);
 
         $em->flush();
+        $errorManager->manageError($error);
         return $photo;
     }
     
@@ -106,12 +108,12 @@ class PhotoController extends AbstractFOSRestController
      *     description="size of image"
      * )
      */
-    public function downloadRandomAction(Album $album,FileHelper $fileHelper,ParamFetcherInterface $paramFetcher)
+    public function downloadRandomAction(Album $album,PhotoHelper $photoHelper,ParamFetcherInterface $paramFetcher)
     {
         $this->denyAccessUnlessGranted('view', $album);
 
         $photo = $this->getDoctrine()->getRepository('App:Photos')->getRandomPhoto($album->getId());
-        return $this->downloadActionHelper($album,$photo,$paramFetcher,$fileHelper);
+        return $this->downloadActionHelper($album,$photo,$paramFetcher,$photoHelper);
     }
     /**
      * @Rest\View(StatusCode = 200)
@@ -149,7 +151,7 @@ class PhotoController extends AbstractFOSRestController
      * downloadAction but without query parameters to be called internally
      */
 
-    public function downloadActionHelper(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher,FileHelper $fileHelper)
+    public function downloadActionHelper(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher,PhotoHelper $photoHelper)
     {
         $this->denyAccessUnlessGranted('view', $album);
 
@@ -158,7 +160,7 @@ class PhotoController extends AbstractFOSRestController
             return $this->view("Album and photo mismatch", Response::HTTP_BAD_REQUEST);
         }
 
-        $image = $fileHelper->getPhotoFile($album,$photo,$paramFetcher->get('thumb'),$paramFetcher->get('size'));
+        $image = $photoHelper->getPhotoFile($album,$photo,$paramFetcher->get('thumb'),$paramFetcher->get('size'));
         
         $headers = array(
             'Content-Type'     => 'image/jpeg',
@@ -187,9 +189,9 @@ class PhotoController extends AbstractFOSRestController
      * )
 
      */
-    public function downloadAction(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher,FileHelper $fileHelper)
+    public function downloadAction(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher,PhotoHelper $photoHelper)
     {
-        return $this->downloadActionHelper($album,$photo,$paramFetcher,$fileHelper);
+        return $this->downloadActionHelper($album,$photo,$paramFetcher,$photoHelper);
     }
 
          /**
@@ -220,14 +222,14 @@ class PhotoController extends AbstractFOSRestController
      *     description="size of image"
      * )
      */
-    public function downloadbyhashAction(Album $album, Photos $photo,FileHelper $fileHelper,ParamFetcherInterface $paramFetcher)
+    public function downloadbyhashAction(Album $album, Photos $photo,PhotoHelper $photoHelper,ParamFetcherInterface $paramFetcher)
     {
         $token = $paramFetcher->get('token');
         if ($token!=null)
         {
             $this->getUser()->setApiKey($token);
         }
-        return $this->downloadActionHelper($album,$photo,$paramFetcher,$fileHelper);
+        return $this->downloadActionHelper($album,$photo,$paramFetcher,$photoHelper);
     }
 
 
