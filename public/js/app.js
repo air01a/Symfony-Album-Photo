@@ -417,8 +417,9 @@ angular.module('delr1', ['angular.img','ngDialog'])
 								}, function (res) {
 									$scope.upload[file.name]='Error';
 									$scope.uploadInProgress--;
+									console.log(res);
+									$http.delete('/api/v1/albums/'+album+'/photos/'+photo.id);
 									$scope.uploadOneFile(file_obj,album,start+1,end);
-									
 								}
 								);
 						});
@@ -429,6 +430,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 		$scope.manageFileUpload = function(file_obj) {
 			if(file_obj != undefined) {
+				$scope.saveInfo(false);
 				let album = $scope.album.id;
 				uploadPopup=ngDialog.open({ 
 					template: 'uploadid',
@@ -485,6 +487,10 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$http.post('/api/v1/albums',{'name':'temp','date':today, 'commentaire':'', 'path':''})
 				.then(function(res) {
 					$scope.actShowPhoto(res.data.id);
+				},
+				function(res){
+					console.log(res);
+					alert("Error creating album : "+res.data.error_str)
 				});
 
 		};
@@ -553,13 +559,23 @@ angular.module('delr1', ['angular.img','ngDialog'])
 							});
 
 		}
+
+
+		$scope.albumChanged = function() {
+			$scope.albumHasChanged=true;
+
+		};
 		//************************************************************************
 		//* Click on button save 
 		//* 
 		//************************************************************************
 
-	    $scope.saveInfo = function() {
+	    $scope.saveInfo = function(refreshPhoto=true) {
 			right2send="";
+			if($scope.albumHasChanged===false) {
+				$scope.inprogress=0;
+				return;
+			}
 			$scope.inprogress=1;
 
 			// Manage rights
@@ -579,9 +595,12 @@ angular.module('delr1', ['angular.img','ngDialog'])
 			$http.patch('/api/v1/albums/'+$scope.album.id, 
 						{'name':$scope.album.name,'date':$scope.album.date,'commentaire':$scope.album.commentaire,'country':$scope.album.country,'youtube':$scope.album.youtube,'sorter':$scope.album.sorter})
 						.then(function(data, status, headers, config) {
+							$scope.albumHasChanged=false;
 							$scope.inprogress=2;
 							$timeout(function () { $scope.inprogress=0 }, 3000);
-							$scope.actShowPhoto($scope.album.id);
+							if (refreshPhoto) {
+								$scope.actShowPhoto($scope.album.id);
+							}
 						},
 						function(data, status, headers, config) {
 							alert(data.error);
@@ -868,7 +887,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.baseUrl=baseURL;
 		$scope.countryMapping = countryMapping;
 		$scope.token=token;
-
+		$scope.albumHasChanged=false;
 
 		
 		var zt = new ZingTouch.Region(document.body,false,false);

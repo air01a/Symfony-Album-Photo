@@ -71,21 +71,20 @@ class PhotoController extends AbstractFOSRestController
 
 
         $error=$photoHelper->storeImage($album, $photo, $uploadedFile->get('file'));
-        
-        $exif=$photoHelper->getExif($album,$photo);
-        if ($exif) {
-            $photo->setExif(json_encode($exif,1));
-            $photo->setDateTime($photoHelper->getExifDate($exif));
+        if ($error>=0){
+            $exif=$photoHelper->getExif($album,$photo);
+            if ($exif) {
+                $photo->setExif(json_encode($exif,1));
+                $photo->setDateTime($photoHelper->getExifDate($exif));
+            }
         }
-
         if ($photo->getPath()==null)
             $em->remove($photo);
         else     
             $em->persist($photo);
 
         $em->flush();
-        $errorManager->manageError($error);
-        return $photo;
+        return $errorManager->sendResponse($photo,$error);
     }
     
     /**

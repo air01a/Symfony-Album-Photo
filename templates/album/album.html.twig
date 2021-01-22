@@ -200,21 +200,21 @@ $(document).ready(function() {
 				<div style='float:right'><button type="button" class="defaultbutton red" ng-click="deleteAlbum()">Delete Album</button></div>
                                 <div class="extra_wrapper" style="text-align: left">
 
-                <label class="alignedLabel">Galerie</label> <input type="text" ng-model="album.name" size="50">
+                <label class="alignedLabel">Galerie</label> <input type="text" ng-model="album.name" size="50" ng-Change="albumHasChanged=true">
                 <p>
-                       <label class="alignedLabel">Date</label><input type="text" ng-model="album.date" id="datepicker"><br/><label class="alignedLabel">Pays:</label>
-			   <input type="text" size="2" ng-model="album.country"><button type="button" class="defaultbutton green" ng-click="displayCountry()">List</button>
-			<br /><p><label class="alignedLabel">Commentaire</label></p><textarea cols="100" ng-model="album.commentaire"></textarea>
+                       <label class="alignedLabel">Date</label><input type="text" ng-model="album.date" id="datepicker" ng-Change="albumHasChanged=true"><br/><label class="alignedLabel">Pays:</label>
+			   <input type="text" size="2" ng-model="album.country" ng-Change="albumHasChanged=true"><button type="button" class="defaultbutton green" ng-click="displayCountry()">List</button>
+			<br /><p><label class="alignedLabel">Commentaire</label></p><textarea cols="100" ng-model="album.commentaire" ng-Change="albumHasChanged=true"></textarea>
 			<label class="alignedLabel">Youtube</label>
-			<textarea cols="100" ng-model="album.youtube"></textarea>
+			<textarea cols="100" ng-model="album.youtube" ng-Change="albumHasChanged=true"></textarea>
                 </div>
-                <button type="button" class="defaultbutton orange" ng-click="managePublic(1)" ng-show="album.public==0">Public</button>
+                <button type="button" class="defaultbutton orange" ng-click="managePublic(1)" ng-show="album.public==0" >Public</button>
                	<div ng-show="album.public==1" style="float: left">
-                        <button type="button" class="defaultbutton green" ng-click="managePublic(0)">Private</button>
+                        <button type="button" class="defaultbutton green" ng-click="managePublic(0)" >Private</button>
                         {{ baseUrl }}/albumpublic/{{album.id}}?token={{album.id_pub}}
                 </div></p><p style="height: 20px">
 				<label class="alignedLabel">Sort album by : </label>
-				<select ng-model="album.sorter" style="float:left">
+				<select ng-model="album.sorter" style="float:left" ng-Change="albumHasChanged=true">
 					<option value="path">File-path</option>
       				<option value="date_time">Exif-Date</option>
         </select><div>
@@ -223,13 +223,14 @@ $(document).ready(function() {
 
 		<div class="right_wrapper">
 			<div ng-repeat="right in rights" class="right_box">
-				<label>{{right.username}}</label> <input type="checkbox" name="{{right.id}}" ng-model="rights[$index].hasRight" >
+				<label>{{right.username}}</label> <input id="rightcbx{{right.id}}" type="checkbox" name="{{right.id}}" ng-model="rights[$index].hasRight" onChange="angular.element(this).scope().albumChanged()" ></input>
 			</div>
                 </div><br />
 
 			<button type="button" class="defaultbutton blue"  ng-click="saveInfo()">Enregistrer</button><img src="/images/validate.png" width="20px" ng-show="inprogress==2">
 		<br /><br /> 
-		 
+		 		<img src="/images/ajax-loader.gif" width="40px" ng-show="inprogress==1">
+
 	<div class="center">
     <div id="drop_file_zone" ondrop="angular.element(this).scope().upload_file(event)" ondragover="return false">
         <div id="drag_upload_file">
@@ -243,7 +244,6 @@ $(document).ready(function() {
     </div>
 </div>
 
-		<img src="/images/ajax-loader.gif" width="40px" ng-show="inprogress==1">
                 <center>
                 <div style="height: 8px;"></div>
 

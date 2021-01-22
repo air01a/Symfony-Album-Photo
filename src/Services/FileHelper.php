@@ -26,9 +26,14 @@ class FileHelper
     }
 
     public function prepareDirectory($directory) {
-        mkdir($this->appPath.'/'.$directory);
-        mkdir($this->appPath.'/'.$directory.'/320');
-        mkdir($this->appPath.'/'.$directory.'/800');
+        try {
+            mkdir($this->appPath.'/'.$directory);
+            mkdir($this->appPath.'/'.$directory.'/320');
+            mkdir($this->appPath.'/'.$directory.'/800');
+            return 0;
+        }catch(\Exception $e) {
+            return -101;
+        }
     }
 
     private function deleteFiles($directory) {

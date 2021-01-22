@@ -14,6 +14,7 @@ use App\Representation\Albums;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Services\ErrorHelper;
 
 class AlbumController extends AbstractFOSRestController
 {
@@ -22,7 +23,7 @@ class AlbumController extends AbstractFOSRestController
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("album", converter="fos_rest.request_body")
      */
-    public function createAction(Album $album, FileHelper $fileHelper, ConstraintViolationList $violations)
+    public function createAction(Album $album, FileHelper $fileHelper, ErrorHelper $errorManager,ConstraintViolationList $violations)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 
@@ -36,12 +37,14 @@ class AlbumController extends AbstractFOSRestController
         $right->setAlbum($album);
 
         $album->setPath($fileHelper->getRandomDirectory());
-        $fileHelper->prepareDirectory($album->getPath());
-        $em->persist($album);
-        $em->persist($right);
-        $em->flush();
+        $error=$fileHelper->prepareDirectory($album->getPath());
+        if ($error==0) {
+            $em->persist($album);
+            $em->persist($right);
+            $em->flush();
+        }
 
-        return $album;
+        return $errorManager->sendResponse($album,$error);
     }
 
     /**

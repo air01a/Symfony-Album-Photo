@@ -235,6 +235,7 @@ class PhotoHelper
         return null;
     }
 
+    
     //####################################################################
     // Put the image in the correct directory and create thumbnail
     //####################################################################
@@ -250,9 +251,9 @@ class PhotoHelper
             file_put_contents($directory.'/320/'.$photo->getPath(),$image);
         } catch(\Exception $e) {
             $photo->setPath(null);
-            return -1;
+            return -102;
         }
-        return 1;
+        return 0;
     }
 
 }
