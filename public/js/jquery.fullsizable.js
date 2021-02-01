@@ -146,6 +146,7 @@ Options:
     current_image = image.index;
     $(image_holder_id).hide();
     $(image_holder_id).html(image);
+    $('#fullsized_download').attr('href',images[current_image].buffer_src+'&size=100000x100000');
     if (image.alt.length>0){
     	$(comment_holder_id).html(image.alt);
     	$(comment_holder_id).show();
@@ -384,8 +385,13 @@ Options:
       	});
      }
     }
+    $image_holder.append('<a id="fullsized_download"  class="fullsized_download" download></a>');
+    $(document).on('click', '#fullsized_download', function(e) {
+      e.stopPropagation();
+    });
     if (options.closeButton) {
       $image_holder.append('<a id="fullsized_close" href="#close"></a>');
+      
       $(document).on('click', '#fullsized_close', function(e) {
         
         e.preventDefault();
@@ -395,7 +401,7 @@ Options:
       });
     }
     
-	
+
     if (options.fullscreenButton && hasFullscreenSupport()) {
       $image_holder.append('<a id="fullsized_fullscreen" href="#fullscreen"></a>');
       $(document).on('click', '#fullsized_fullscreen', function(e) {
@@ -473,6 +479,8 @@ Options:
     $('#fullsized_close, #fullsized_fullscreen').toggle(true);
     $('#fullsized_go_prev').toggle(current_image !== 0 && options.autoPlay!=true);
     $('#fullsized_play_id').toggle(true);
+    $('#fullsized_download').toggle(true);
+
     if ($("#fullsized_timeSlider").length!=0)
         $("#fullsized_timeSlider").toggle(true);
     return $('#fullsized_go_next').toggle(current_image !== images.length - 1 && options.autoPlay!=true);

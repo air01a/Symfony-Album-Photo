@@ -35,7 +35,7 @@
 #fullsized_go_next:hover {
   background-position: -32px -126px;
 }
-#fullsized_close, #fullsized_fullscreen, #fullsized_play_id{
+#fullsized_close, #fullsized_fullscreen, #fullsized_play_id, #fullsized_download {
   position: fixed;
   top: 0;
   display: block;
@@ -51,8 +51,16 @@
 }
 
 .fullsized_play {
-  right: 96px;
+  right: 80px;
   background: url('jquery-fullsizable.png') -96px -128px;
+}
+
+#fullsized_download {
+  left: 78px;
+  background: url('/images/dwnld.png') -96px -128px;
+}
+#fullsized_download:hover {
+  background-position: -64px -32px;
 }
 
 .fullsized_play:hover {
