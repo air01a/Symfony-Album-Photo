@@ -14,6 +14,8 @@ use App\Representation\Albums;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+
 use App\Services\ErrorHelper;
 
 class AlbumController extends AbstractFOSRestController
@@ -162,7 +164,10 @@ class AlbumController extends AbstractFOSRestController
         //    'Content-Type'     => 'application/zip',
         //    'Content-Disposition' => 'inline; filename="photos'.strval($album->getId()).'.zip"');
         //return new Response($zip, 200, $headers);
-        return new BinaryFileResponse($zip);
+        $response = new BinaryFileResponse($zip);
+        $response->headers->set('Content-Type','application.zip');
+        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $album->getName().'.zip'));
+        return $response;
     }
 
 

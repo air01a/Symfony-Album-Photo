@@ -22,9 +22,12 @@
 <div id="photocontrol">
 </div>
 <div ng-controller="GalleryCtrl" id="mainCtrl">
-
+<script type="text/ng-template" id="zipid">
+   <div>Veuillez attendre quelques secondes que le fichier zip soit généré, il sera alors téléchargé automatiquement. Vous pouvez fermer cette fenêtre.</div>
+</script>
 {%  if admin|default(null)   %}
 {% verbatim %}
+
 
 <script>
   admin=true;
@@ -81,8 +84,10 @@
 			<div style="background: red;color: white;" ng-if="value=='Error'">{{ key }}</div>
 			<div class="text-color: green;">{{ value }}</div><BR />
 	</div>
-		
+
 </script>
+
+
 
 
 <script type="text/ng-template" id="deleteAlbum">
@@ -272,7 +277,7 @@ $(document).ready(function() {
 {% endif %}
 
 	</p>
-		<div class="tooltip">	{% verbatim %}<a href="/albums/{{album.id}}/zip">{% endverbatim %}<img class="img_inner fleft zoom" src="/images/zip2.png" height="40px" id="zipimg"></a><span class="tooltiptext">{% trans %}Download ZIP{% endtrans %}</span></div>
+		<div class="tooltip">	{% verbatim %}<a href="/albums/{{album.id}}/zip" ng-click="zipOpen()">{% endverbatim %}<img class="img_inner fleft zoom" src="/images/zip2.png" height="40px" id="zipimg"></a><span class="tooltiptext">{% trans %}Download ZIP{% endtrans %}</span></div>
 		<div class="tooltip"><a href ng-click="diaporama()"><img class="img_innet fleft zoom" src="/images/diapo.png"  height="40px" id="diap"><span class="tooltiptext">{% trans %}SlideShow{% endtrans %}</span></div>
 		<div class="tooltip"><a href ng-click="showVideo()"><img class="img_inner fleft zoom " src="/images/play_file.png" height="40px" ng-show="gallery.gallery.video" id="videoimg"></a><span class="tooltiptext">{% trans %}Go to video{% endtrans %}</span></div>
 		<div class="tooltip"><a href ng-click="goToVideo()"><img class="img_inner fleft zoom" src="/images/play_file.png" height="40px" ng-show="videotabshow" id="videoimg2"></a><span class="tooltiptext">{% trans %}Go to video{% endtrans %}</span></div>

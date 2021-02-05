@@ -323,6 +323,14 @@ angular.module('delr1', ['angular.img','ngDialog'])
 				});
 		}
 
+		$scope.zipOpen = function() {
+			$scope.zip = ngDialog.open({ template: 'zipid',className: 'ngdialog-theme-default',scope:$scope });
+			$timeout( function(){
+				$scope.zip.close();
+				
+			}, 5000 );
+		}
+
 		//************************************************************************
 		//* Open country selection popup
 		//* 
