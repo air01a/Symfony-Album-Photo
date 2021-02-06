@@ -13,6 +13,19 @@ input {
 	border-radius: 0 !important;	 
 }
 
+.help_image {
+	float: left;
+	height: 40px;
+	width: 40px;
+	font-family: Veranda;
+}
+.help_text {
+	float:left;
+	margin-left: 10px;
+	margin-top: 10px;
+	font-family: Veranda;
+	font-size:large;
+}
 
 html {
 	width: 100%;

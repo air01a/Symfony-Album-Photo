@@ -3,7 +3,7 @@
     { "path":'home',"route":"slideshow"},
     { "path":'photos',"route":"albumview"},
     { "path":'map',"route":"map"},
-    { "path":'links',"route":"getLink"}
+    { "path":'links',"route":"getLink"},
   ]
 %}
 
@@ -52,6 +52,9 @@
                                                         {%  if is_granted('ROLE_ADMIN') %}
                                                         <li {% if app.request.attributes.get("_route") == 'adminview' %} class="current"{% endif %}><a href="{{ 'admin' }}">Admin</a></li>
                                                         {% endif %}
+                                                        {% endif %}
+                                                        {% if helpmenu=='true' %}
+                                                        <li {% if app.request.attributes.get("_route") == 'help' %} class="current"{% endif %}><a href="/help" >{{ 'help'|trans }}</a></li>
                                                         {% endif %}
                                                          <li><a href="/logout">{% if app.user !=null and app.user.username!='ANONYMOUS' %}{% trans %}quit{% endtrans %}{% else %}Login{% endif %}</a></li>
                             

@@ -1,0 +1,20 @@
+<h2><span>L'<span class="col1">Aide</span></span></h2>
+        <p class="help_text">Il y'a 4 boutons importants au niveau des albums photos, situés en haut à gauche de la page : </p>
+                <center>
+                        <p><img src="/images/help.png" width="50%"></p>
+        </center>
+        <p style="display: table"><img src="/images/g1.png" class="help_image"> <span class="help_text" ><b>Back : </b>Retour à la liste des albums</span></p> 
+        <p style="display: table"><img src="/images/zip2.png" class="help_image"> <span class="help_text" ><b>Zip : </b>Télécharger un fichier ZIP contenant toutes les photos. Le fichier étant généré à chaque click, le téléchargement peut démarrer après quelques secondes.</span></p> 
+        <p style="display: table"><img src="/images/diapo.png" class="help_image"> <span class="help_text" ><b>Diapo : </b>Voir les photos en diaporam plein écran</span></p>
+        <p style="display: table"><img src="/images/play_file.png" class="help_image"> <span class="help_text" ><b>Vidéo : </b>Lien vers les vidéos (bas de page)</span></p> 
+        <p class="help_text" style="display: table">Lorsque vous cliquez sur une miniature, l'image s'affiche en plein écran:</p>
+        <p style="display: table">&nbsp;</p>&nbsp;</p>
+        <center>
+                <p><img src="/images/help_fullscreen.png" width="50%"></p>
+        </center> 
+        <p style="display: table"><img src="/images/helpback.png" class="help_image"> <span class="help_text" ><b>Download : </b>Télécharger la photo en qualité maximale</span></p> 
+        <p style="display: table"><img src="/images/helpfs.png" class="help_image"> <span class="help_text" ><b>FullScreen : </b>Plein écran</span></p> 
+        <p style="display: table"><img src="/images/helpplay.png" class="help_image"> <span class="help_text" ><b>SlideShow : </b>Diaporama</span></p> 
+        <p style="display: table"><img src="/images/helpclose.png" class="help_image"> <span class="help_text" ><b>Back : </b>Retour à l'album</span></p> 
+        <p style="display: table"><img src="/images/helparrow1.png" class="help_image"> <span class="help_text" ><b>Next : </b>Photo suivante</span></p> 
+        <p style="display: table"><img src="/images/helparrow2.png" class="help_image"> <span class="help_text" ><b>Previous : </b>Photo précédente</span></p> 
