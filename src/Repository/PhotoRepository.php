@@ -15,11 +15,24 @@ class PhotoRepository extends EntityRepository
                          ->where('p.albumId = ?1')
                          ->setParameter(1,$id)
                          ->addOrderBy('p.orderInAlbum', 'ASC');
-        if ($orderBy=='date_time'){
-            $qb->addOrderBy('p.dateTime','ASC');
+
+        
+        
+        switch($orderBy) {
+            case 'date_time':
+                $qb->addOrderBy('p.dateTime','ASC');
+                break;
+            case 'date_time_desc':
+                $qb->addOrderBy('p.dateTime','DESC');
+                break;
+            case 'path_desc':
+                $qb->addOrderBy('p.dateTime','DESC');
+                break;
+            default:
+                $qb->addOrderBy('p.path', 'ASC'); 
         }
-        else
-            $qb->addOrderBy('p.path', 'ASC');   
+       
+              
         return $qb->getQuery()->getResult();
     }
 

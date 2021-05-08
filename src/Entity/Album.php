@@ -94,7 +94,7 @@ class Album
     /**
      * @var string
      *
-     * @ORM\Column(name="sorter", type="string", length=10, nullable=false, options={"default"="path"})
+     * @ORM\Column(name="sorter", type="string", length=20, nullable=false, options={"default"="path"})
      */
     private $sorter = 'path';
 
