@@ -82,6 +82,10 @@ class PhotoHelper
         $image = imagerotate($image, array_values([0, 0, 0, 180, 0, 0, -90, 0, 90])[@exif_read_data($filename)['Orientation'] ?: 0], 0);
     } 
 
+    public function getImageNotFound() {
+        $image = file_get_contents(\dirname(__DIR__).'/../public/images/notfound.jpeg');
+        return $image;
+    }
 
     public function getPhotoFile(Album $album,Photos $photo,int $thumb,$win){
        ($thumb==1) ? $size="/320/" : $size="/800/";
@@ -112,7 +116,7 @@ class PhotoHelper
 
         } else {
             // A corriger
-            $image = file_get_contents(\dirname(__DIR__).'/../public/images/notfound.jpeg');
+            $image = $this->getImageNotFound();
         }
         return $image;
     }

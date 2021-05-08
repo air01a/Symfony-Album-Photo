@@ -112,6 +112,8 @@ class PhotoController extends AbstractFOSRestController
         $this->denyAccessUnlessGranted('view', $album);
 
         $photo = $this->getDoctrine()->getRepository('App:Photos')->getRandomPhoto($album->getId());
+
+
         return $this->downloadActionHelper($album,$photo,$paramFetcher,$photoHelper);
     }
     /**
@@ -150,17 +152,26 @@ class PhotoController extends AbstractFOSRestController
      * downloadAction but without query parameters to be called internally
      */
 
-    public function downloadActionHelper(Album $album, Photos $photo,ParamFetcherInterface $paramFetcher,PhotoHelper $photoHelper)
+    public function downloadActionHelper(Album $album, ?Photos $photo,ParamFetcherInterface $paramFetcher,PhotoHelper $photoHelper)
     {
         $this->denyAccessUnlessGranted('view', $album);
 
-        if ($album->getId() <> $photo->getAlbumId())
-        {
-            return $this->view("Album and photo mismatch", Response::HTTP_BAD_REQUEST);
-        }
 
-        $image = $photoHelper->getPhotoFile($album,$photo,$paramFetcher->get('thumb'),$paramFetcher->get('size'));
-        
+        if ($photo==null)
+        {
+            $image = $photoHelper->getImageNotFound();
+            $photo = new Photos;
+            $photo->setPath('notfound.jpg');
+        } else {
+
+            if ($album->getId() <> $photo->getAlbumId())
+            {
+                return $this->view("Album and photo mismatch", Response::HTTP_BAD_REQUEST);
+            }
+
+            $image = $photoHelper->getPhotoFile($album,$photo,$paramFetcher->get('thumb'),$paramFetcher->get('size'));
+        }    
+
         $headers = array(
             'Content-Type'     => 'image/jpeg',
             'Content-Disposition' => 'inline; filename="'.$photo->getPath().'"');

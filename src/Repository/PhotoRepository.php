@@ -49,7 +49,7 @@ class PhotoRepository extends EntityRepository
                          ->orderBy('RAND()')
                          ->setMaxResults( 1 );;
 
-
-        return $qb->getQuery()->getSingleResult();
+        
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
