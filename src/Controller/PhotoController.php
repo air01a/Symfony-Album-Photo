@@ -14,6 +14,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+use Psr\Log\LoggerInterface;
 
 
 class PhotoController extends AbstractFOSRestController
@@ -33,6 +34,7 @@ class PhotoController extends AbstractFOSRestController
 
         $em = $this->getDoctrine()->getManager();
 
+
         $em->persist($photo);
         $em->flush();
 
@@ -47,8 +49,11 @@ class PhotoController extends AbstractFOSRestController
      */
     public function deleteAction(Album $album, Photos $photo, FileHelper $fileHelper)
     {   
-        $fileHelper->deletePhoto($album,$photo);
         $em = $this->getDoctrine()->getManager();
+        $count = $em->getRepository('App:Photos')->isPhotoUniq($album,$photo);
+        if ($count<2)
+            $fileHelper->deletePhoto($album,$photo);
+
         $em->remove($photo);
         $em->flush();
     }
@@ -59,7 +64,7 @@ class PhotoController extends AbstractFOSRestController
      * @ParamConverter("photo", options={"id" = "idPhoto"})
      * @Rest\View
      */
-    public function uploadAction(Album $album, Photos $photo, PhotoHelper $photoHelper,Request $request,ErrorHelper $errorManager)
+    public function uploadAction(Album $album, Photos $photo, PhotoHelper $photoHelper,Request $request,ErrorHelper $errorManager,LoggerInterface $logger)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 
@@ -78,10 +83,23 @@ class PhotoController extends AbstractFOSRestController
                 $photo->setDateTime($photoHelper->getExifDate($exif));
             }
         }
+
         if ($photo->getPath()==null)
             $em->remove($photo);
-        else     
+        else {
+            // Put photo in the right position
+            $orderBy = $album->getSorter();
+            $order = $this->getDoctrine()->getRepository('App:Photos')->getOrder($album->getId(),$photo->getDateTime(), $orderBy);
+            if ($order) {
+             //   var_dump($order);
+                $this->getDoctrine()->getRepository('App:Photos')->updateOrder($album->getId(),$order);  
+                $photo->setOrderInAlbum($order);
+            }   
+
             $em->persist($photo);
+        }
+
+
 
         $em->flush();
         return $errorManager->sendResponse($photo,$error);
@@ -285,7 +303,7 @@ class PhotoController extends AbstractFOSRestController
      *  @ParamConverter("photo", options={"id" = "idPhoto"})
      * 
      */
-    public function partialUpdateAction(Album $album, Photos $photo, Request $request)
+    public function partialUpdateAction(Album $album, Photos $photo, Request $request,LoggerInterface $logger)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 

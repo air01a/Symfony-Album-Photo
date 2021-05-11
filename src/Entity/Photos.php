@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Photos
@@ -71,12 +72,13 @@ class Photos
      * @var datetime
      *
      * @ORM\Column(name="date_time", type="datetime", nullable=true)
+     * @Serializer\Type("DateTime<'U'>")
      */
     private $dateTime;
 
 
     public function getDateTime(){
-        return $this->dataTime;
+        return $this->dateTime;
     }
 
     public function setDateTime($date){

@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 use App\Services\ErrorHelper;
+use Psr\Log\LoggerInterface;
 
 class AlbumController extends AbstractFOSRestController
 {
@@ -229,13 +230,16 @@ class AlbumController extends AbstractFOSRestController
      *     requirements = {"id"="\d+"}
      * )
      */
-    public function partialUpdateAction(Album $album, Request $request)
+    public function partialUpdateAction(Album $album, Request $request,LoggerInterface $logger)
     {
         $this->denyAccessUnlessGranted('edit', $album);
 
         $em = $this->getDoctrine()->getManager();
         $this->getDoctrine()->getManager()->flush();
         $data = json_decode($request->getContent());
+        if ($data->sorter != $album->getSorter())   
+            $this->getDoctrine()->getRepository('App:Photos')->resetOrder($album->getId());
+
         $em->persist($album->setParameters($data));
         $em->flush();
         return $album;

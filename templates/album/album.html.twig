@@ -219,7 +219,8 @@ $(document).ready(function() {
                         {{ baseUrl }}/albumpublic/{{album.id}}?token={{album.id_pub}}
                 </div></p><p style="height: 20px">
 				<label class="alignedLabel">Sort album by : </label>
-				<select ng-model="album.sorter" style="float:left" ng-Change="albumHasChanged=true">
+				<select ng-model="album.sorter" style="float:left" ng-Change="albumHasChanged=true" onfocus="this.setAttribute('PrvSelectedValue',this.value);" onchange="if(confirm('Le changement du tri remet à zéro les modifications manuelle apportées à l\'ordre des photos. Confirmez vous ?')==false){ this.value=this.getAttribute('PrvSelectedValue');return false; }" 
+>
 					<option value="path">File-path</option>
       				<option value="date_time">Exif-Date</option>
 					<option value="path_desc">File-path décroissant</option>
