@@ -600,8 +600,9 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 
 			// Manage albums modificaiton
+			console.log({'pinned':$scope.album.pinned,'name':$scope.album.name,'date':$scope.album.date,'commentaire':$scope.album.commentaire,'country':$scope.album.country,'youtube':$scope.album.youtube,'sorter':$scope.album.sorter});
 			$http.patch('/api/v1/albums/'+$scope.album.id, 
-						{'name':$scope.album.name,'date':$scope.album.date,'commentaire':$scope.album.commentaire,'country':$scope.album.country,'youtube':$scope.album.youtube,'sorter':$scope.album.sorter})
+						{'pinned':$scope.album.pinned,'name':$scope.album.name,'date':$scope.album.date,'commentaire':$scope.album.commentaire,'country':$scope.album.country,'youtube':$scope.album.youtube,'sorter':$scope.album.sorter})
 						.then(function(data, status, headers, config) {
 							$scope.albumHasChanged=false;
 							$scope.inprogress=2;

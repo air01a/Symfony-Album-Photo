@@ -97,7 +97,13 @@ class Album
      * @ORM\Column(name="sorter", type="string", length=20, nullable=false, options={"default"="path"})
      */
     private $sorter = 'path';
-
+    
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="pinned", type="boolean", nullable=false)
+     */
+    private $pinned = 0;
 
 
     public function getId() {
@@ -179,6 +185,14 @@ class Album
         return $this->idPub;
     } 
 
+    public function getPinned() {
+        return $this->pinned;
+    } 
+
+
+    public function setPinned($pinned) {
+        $this->pinned=$pinned;
+    } 
 
     public function setIdPub($idPub) {
         $this->idPub = $idPub;

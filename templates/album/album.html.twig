@@ -226,6 +226,9 @@ $(document).ready(function() {
 					<option value="path_desc">File-path décroissant</option>
       				<option value="date_time_desc">Exif-Date décroissant</option>
         </select><div>
+		<div><label class="alignedLabel">Epinglé</label>
+		<input id="pinned" type="checkbox" style="float:left" name="pinned" ng-model="album.pinned" onChange="angular.element(this).scope().albumChanged()" ></input>
+		</div><br /><br />
 		<div>
 		<label class="alignedLabel"><b>Right Management</b> </label>
 

@@ -27,7 +27,8 @@ class AlbumRepository extends AbstractRepository
         }
 
         $qb
-            ->orderBy('a.date', $order);
+            ->orderBy('a.pinned', 'DESC')
+            ->addOrderBy('a.date', $order);
 
         $qb->getQuery()->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true);
         return $this->paginate($qb, $limit, $page);
