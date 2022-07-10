@@ -38,8 +38,8 @@ class PhotoHelper
 
         if($old_x == $old_y) 
         {
-            $thumb_w    =   $x;
-            $thumb_h    =   $y;
+            $thumb_w    =   max($x,$y);
+            $thumb_h    =   $thumb_w;
         }
 
         if ($thumb_w>$old_x || $thumb_h>$old_y){
