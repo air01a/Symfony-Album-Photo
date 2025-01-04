@@ -154,3 +154,21 @@ figure, figcaption,figdate {
 	min-width: 100%;
 	object-fit: cover;
   }
+
+
+  .ngminivideo {
+	object-fit: cover; /* Recadre les images pour qu'elles remplissent la boîte */
+	border-radius: 5px; /* Facultatif : coins arrondis */
+    margin-top: 10px;
+	margin-left: 1px;
+	margin-right: 1px;
+	width:252px;
+  }
+
+
+  .videogallery {
+	display: flex;
+	flex-wrap: wrap; /* Les images passent à la ligne si nécessaire */
+	gap: 10px; /* Espacement entre les images */
+	justify-content: center; /* Centrer les images horizontalement */
+  }

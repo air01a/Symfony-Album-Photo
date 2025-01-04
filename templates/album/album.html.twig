@@ -12,8 +12,13 @@
 <script src="/js/app.js"></script>
 <link rel="stylesheet" href="/css/jquery-ui.min.css">
 <script src="/js/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="/css/ddvideogallery.css" />
-<script src="/js/ddvideogallery.js"></script>
+          <link rel="stylesheet" href="/css/lightgallery.css">
+     <link rel="stylesheet" href="/css/lightgallery-core.css">
+     
+     <link rel="stylesheet" href="/css/lg-video.css">
+<script src="js/lightgallery.min.js"></script>
+<script src="js/lg-video.min.js"></script>
+
 <script src="/js/imgsrc.js"></script>
 <script src="/js/ngDialog.min.js"></script>
 <script src="/js/zingtouch.min.js"></script>
@@ -221,10 +226,10 @@ $(document).ready(function() {
 				<label class="alignedLabel">Sort album by : </label>
 				<select ng-model="album.sorter" style="float:left" ng-Change="albumHasChanged=true" onfocus="this.setAttribute('PrvSelectedValue',this.value);" onchange="if(confirm('Le changement du tri remet à zéro les modifications manuelle apportées à l\'ordre des photos. Confirmez vous ?')==false){ this.value=this.getAttribute('PrvSelectedValue');return false; }" 
 >
-					<option value="path">File-path</option>
-      				<option value="date_time">Exif-Date</option>
-					<option value="path_desc">File-path décroissant</option>
-      				<option value="date_time_desc">Exif-Date décroissant</option>
+					<option value="path">Nom de fichier</option>
+      				<option value="date_time">Date de la photo (inscrit dans les exivs)</option>
+					<option value="path_desc">Nom de fichier ordre alphabétique inverse</option>
+      				<option value="date_time_desc">Date de la photo par date décroissante</option>
         </select><div>
 		<div><label class="alignedLabel">Epinglé</label>
 		<input id="pinned" type="checkbox" style="float:left" name="pinned" ng-model="album.pinned" onChange="angular.element(this).scope().albumChanged()" ></input>
@@ -306,12 +311,28 @@ $(document).ready(function() {
 		</div>
 
 
-<p id="videobox">
-<div id="videojukebox" class="ddvideoGallery" style="width: 70%">
-	<div class="videoWrapper"></div>
-	<div class="videoNav"></div>
+<h3 class="pb1"><span class="col2">Videos</span></h3>
+<div class="container-sm">
+  <div class="row justify-content-center">
+    <div class="col col-md-10" class="videogallery">
+      <div class="videogallery" id="gallery-container">
+
+
+  <a ng-repeat="video in videotab" on-finish-render="callbackAfterRender()"
+    data-lg-size="800-600" 
+    data-pinterest-text="Pin it3" 
+    data-tweet-text="lightGallery slide 4" 
+	
+	ng-href="https://youtu.be/{{ video }}"
+    ng-attr-data-poster="{{ 'https://img.youtube.com/vi/' + video + '/maxresdefault.jpg' }}">
+    <img 
+      class="ngminivideo" 
+      ng-src="{{ 'https://img.youtube.com/vi/' + video + '/maxresdefault.jpg' }}">
+  </a>
+
+
+
 </div>
-</p>
 {% endverbatim %}
 {% endif %}
 		</center>

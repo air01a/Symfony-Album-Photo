@@ -259,7 +259,21 @@ function makeRandomString(length) {
  }
  
 
+ 
+
 angular.module('delr1', ['angular.img','ngDialog'])
+	.directive('onFinishRender', function ($timeout) {
+		return {
+			restrict: 'A',
+			link: function (scope, element, attrs) {
+				if (scope.$last) { // Vérifie que c'est le dernier élément d'une boucle (ex : ng-repeat)
+					$timeout(function () {
+						scope.$eval(attrs.onFinishRender); // Évalue l'expression Angular passée à la directive
+					});
+				}
+			}
+		};
+	})
 	.controller('GalleryCtrl', function($scope,$rootScope,$http,$timeout,ngDialog) {
 		//10 seconds delay
 		$scope.timeout=function() {
@@ -694,26 +708,26 @@ angular.module('delr1', ['angular.img','ngDialog'])
 							});	
 						if ($scope.videotab!=null){
 							$scope.videotabshow=true;
+							console.log($scope.videotab);
 
-							var myvideogallery = new ddyoutubeGallery({
-									sliderid: 'videojukebox',
-									selected: 0, // default selected video within playlist (0=1st, 1=2nd etc)
-									autoplay: 0, // 0 to disable auto play, 1 to enable
-									autocycle: 1, // 0 to disable auto cycle, 1 to auto cycle and play each video automatically
-									playlist: $scope.videotab // list of youtube video IDs. It's the last segment within a shareable Youtube URL
-							});
-							$("#videojukebox").show();
-						}
-						else {
+					} else {
 							$scope.videotabshow=false;
-							$("#videojukebox").hide();
+							//$("#videojukebox").hide();
 						}
 	        		});
 				if ($scope.album == undefined)
 					return;
 
 				
+
     	};
+
+		$scope.callbackAfterRender = function () {
+			console.log('Tous les éléments ont été rendus.');
+			lightGallery(document.getElementById('gallery-container'), {
+				plugins: [lgVideo],
+		});
+		  };
 		
 
 		//************************************************************************
