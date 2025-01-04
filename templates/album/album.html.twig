@@ -310,6 +310,7 @@ $(document).ready(function() {
 			<div class="commentaire" > {{ photo.commentaire }}</div>
 		</div>
 
+<p id="videobox">
 
 <h3 class="pb1"><span class="col2">Videos</span></h3>
 <div class="container-sm">
@@ -323,16 +324,14 @@ $(document).ready(function() {
     data-pinterest-text="Pin it3" 
     data-tweet-text="lightGallery slide 4" 
 	
-	ng-href="https://youtu.be/{{ video }}"
+	ng-href="https://youtu.be/{{ video }}?mute=0"
     ng-attr-data-poster="{{ 'https://img.youtube.com/vi/' + video + '/maxresdefault.jpg' }}">
     <img 
       class="ngminivideo" 
       ng-src="{{ 'https://img.youtube.com/vi/' + video + '/maxresdefault.jpg' }}">
   </a>
-
-
-
 </div>
+</p>
 {% endverbatim %}
 {% endif %}
 		</center>

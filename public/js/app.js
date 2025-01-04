@@ -723,9 +723,35 @@ angular.module('delr1', ['angular.img','ngDialog'])
     	};
 
 		$scope.callbackAfterRender = function () {
+			function pauseAllYoutube() { 
+				$('iframe[src*="youtube.com"]').each(function() {
+					var iframe = $(this)[0].contentWindow;
+					iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+				}); 
+			}
 			console.log('Tous les éléments ont été rendus.');
 			lightGallery(document.getElementById('gallery-container'), {
+				download : false,
 				plugins: [lgVideo],
+				hideControlOnEnd : true,
+				loadYouTubePoster :false,
+				autoplayVideoOnSlide : true,
+				youtubePlayerParams: {
+					enablejsapi:1,
+				},
+				onSlideNext: function(el) { 
+					pauseAllYoutube();
+				},
+				onSlidePrev: function(el) { 
+					pauseAllYoutube();
+				},
+				onSlideBefore: function(el) { 
+					pauseAllYoutube();
+				},
+				onSlideAfter: function(el) { 
+					pauseAllYoutube();
+				},
+
 		});
 		  };
 		
@@ -735,6 +761,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		//* 
 		//************************************************************************
 		$scope.goToVideo = function() {
+			console.log($('#videobox').offset().top);
 			$(document).scrollTop($('#videobox').offset().top);
 		}
 
