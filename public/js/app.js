@@ -730,7 +730,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 				}); 
 			}
 			console.log('Tous les éléments ont été rendus.');
-			lightGallery(document.getElementById('gallery-container'), {
+			$scope.lightGallery = lightGallery(document.getElementById('gallery-container'), {
 				download : false,
 				plugins: [lgVideo],
 				hideControlOnEnd : true,
@@ -891,6 +891,9 @@ angular.module('delr1', ['angular.img','ngDialog'])
 		$scope.returnToGal = function () {
 			idgal=false;
 			$(window).scrollTop($scope.back);
+			if (typeof $scope.lightGallery !== 'undefined') {
+				$scope.lightGallery.destroy();
+			}
 			$scope.showphoto=false;
 			$scope.hash="";
 			$scope.displayGal();
