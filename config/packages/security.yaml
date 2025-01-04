@@ -34,15 +34,15 @@ security:
 #                    - lexik_jwt_authentication.jwt_token_authenticator
                      - App\Security\JwtTokenAuthenticator
             logout:
-                path: app_logout            
+                path: app_logout
         main:
             anonymous: true
             lazy: true
             provider: app_user_provider
             guard:
-                authenticators: 
+                authenticators:
                     - App\Security\LoginFormAuthenticator
-                entry_point: App\Security\LoginFormAuthenticator            
+                entry_point: App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
             # activate different ways to authenticate
@@ -62,4 +62,3 @@ security:
         - { path: ^/albumpublic*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/registration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/.*, roles: IS_AUTHENTICATED_FULLY }
-        
