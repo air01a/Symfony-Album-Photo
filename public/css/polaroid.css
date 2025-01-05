@@ -172,6 +172,7 @@ figure, figcaption,figdate {
   }
 
 
+
    .ngminivideo {
 	object-fit: cover; /* Recadre les images pour qu'elles remplissent la boîte */
 	border-radius: 5px; /* Facultatif : coins arrondis */
