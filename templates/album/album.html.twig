@@ -311,8 +311,7 @@ $(document).ready(function() {
 		</div>
 
 <p id="videobox">
-
-<h3 class="pb1"><span class="col2">Videos</span></h3>
+<h3 class="pb1"><span class="col2" ng-if="videotab">Videos</span></h3>
 <div class="container-sm">
   <div class="row justify-content-center">
     <div class="col col-md-10" class="videogallery">
@@ -336,6 +335,7 @@ $(document).ready(function() {
 	</div>
   </a>
 </div>
+
 </p>
 {% endverbatim %}
 {% endif %}
