@@ -141,9 +141,25 @@ figure, figcaption,figdate {
 			transform: translate(-50%,-50%);
   }
   
+  videogallery {
+	position: relative;
+    width: 200px;
+  }
+  .container{
+    position: relative;
+    width: 200px;
+}
+.container .play-icon{
+    cursor: pointer;
+    position: absolute;
+	opacity : 50%;
+    top : 50%;
+    left : 50%;
+    transform: translate(-50%, -50%);
+}
 
 
-  .ngmini {
+ .ngmini {
     position: absolute;
     left: -1000%;
     right: -1000%;
@@ -156,17 +172,30 @@ figure, figcaption,figdate {
   }
 
 
-  .ngminivideo {
+   .ngminivideo {
 	object-fit: cover; /* Recadre les images pour qu'elles remplissent la boîte */
 	border-radius: 5px; /* Facultatif : coins arrondis */
     margin-top: 10px;
 	margin-left: 1px;
 	margin-right: 1px;
 	width:252px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
   }
 
+ .ngminivideo:hover {
+    transform: scale(1.05); /* Zoom léger */
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2); /* Ombre accentuée */
+}
 
-  .videogallery {
+ .video-label {
+		cursor: pointer;
+		position: absolute;
+		top : 50%;
+		left : 50%;
+		transform: translate(-50%, -50%);
+
+}
+ .videogallery {
 	display: flex;
 	flex-wrap: wrap; /* Les images passent à la ligne si nécessaire */
 	gap: 10px; /* Espacement entre les images */

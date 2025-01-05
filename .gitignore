@@ -20,3 +20,7 @@ config/jwt/*
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 .DS_Store
+/public/images/diapo/*
+composer.phar
+php.ini
+.user.ini
