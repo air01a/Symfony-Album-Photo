@@ -214,9 +214,10 @@ $(document).ready(function() {
                 <p>
                        <label class="alignedLabel">Date</label><input type="text" ng-model="album.date" id="datepicker" ng-Change="albumHasChanged=true"><br/><label class="alignedLabel">Pays:</label>
 			   <input type="text" size="2" ng-model="album.country" ng-Change="albumHasChanged=true"><button type="button" class="defaultbutton green" ng-click="displayCountry()">List</button>
-			<br /><p><label class="alignedLabel">Commentaire</label></p><textarea cols="100" ng-model="album.commentaire" ng-Change="albumHasChanged=true"></textarea>
-			<label class="alignedLabel">Youtube</label>
-			<textarea cols="100" ng-model="album.youtube" ng-Change="albumHasChanged=true"></textarea>
+			<br /><p><label class="alignedLabel">Commentaire</label></p><textarea cols="100" rows="5" ng-model="album.commentaire" ng-Change="albumHasChanged=true"></textarea>
+			
+			<p><label class="alignedLabel">id des Liens Youtube (1 par ligne)</label>
+			<textarea cols="30" ng-model="album.youtube" rows="4" ng-Change="albumHasChanged=true"></textarea></p>
                 </div>
                 <button type="button" class="defaultbutton orange" ng-click="managePublic(1)" ng-show="album.public==0" >Public</button>
                	<div ng-show="album.public==1" style="float: left">
