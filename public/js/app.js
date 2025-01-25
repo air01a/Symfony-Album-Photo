@@ -710,6 +710,37 @@ angular.module('delr1', ['angular.img','ngDialog'])
 							$scope.videotabshow=true;
 							console.log($scope.videotab);
 
+							$scope.videotablocal = [];
+
+							$scope.videotab.forEach((item) => {
+								let element = {};
+
+								if (item.includes("/")) {
+									element.src = '';
+									element.thumb = item+".jpg";
+									element.datavideo=`{"source": [{"src":"${item}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}`;
+									console.log(element.datavideo);
+									$scope.videotablocal.push(element);
+
+								} else { 
+									element.src = `https://youtu.be/${item}?mute=0`;
+									element.thumb = `https://img.youtube.com/vi/${item}/maxresdefault.jpg`;
+									element.datavideo="";
+									$scope.videotablocal.push(element);
+								}
+							});
+					/*
+								// Parcourir le tableau et déplacer les éléments contenant "/"
+									$scope.videotab = $scope.videotab.filter(element => {
+									if (element.includes("/")) {
+										$scope.videotablocal.push(element); // Ajouter l'élément au nouveau tableau
+										return false; // Supprimer l'élément du tableau original
+									}
+									return true; // Garder l'élément dans le tableau original
+								});
+								*/
+							console.log($scope.videotab2);
+
 					} else {
 							$scope.videotabshow=false;
 							//$("#videojukebox").hide();
@@ -754,6 +785,7 @@ angular.module('delr1', ['angular.img','ngDialog'])
 
 		});
 		  };
+
 		
 
 		//************************************************************************
