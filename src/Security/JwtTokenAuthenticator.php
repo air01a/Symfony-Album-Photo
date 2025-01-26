@@ -43,7 +43,7 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
         $token = $extractor->extract($request);
 	
         if (!$token) {
-            return;
+            return false;
         }
 
         return $token;
@@ -53,7 +53,7 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
     {
         try {
             $data = $this->jwtEncoder->decode($credentials);
-        } catch (JWTDecodeFailureException $e) {
+        } catch (\Throwable $e) {
             // if you want to, use can use $e->getReason() to find out which of the 3 possible things went wrong
             // and tweak the message accordingly
             // https://github.com/lexik/LexikJWTAuthenticationBundle/blob/05e15967f4dab94c8a75b275692d928a2fbf6d18/Exception/JWTDecodeFailureException.php
