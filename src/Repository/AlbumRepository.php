@@ -59,6 +59,7 @@ class AlbumRepository extends AbstractRepository
             ->where('a.country = :country')
             ->join('a.rights','r')
             ->andWhere('r.user = :userId')
+            ->orderBy('a.date', 'DESC')
             ->setParameter('country',$country)
             ->setParameter('userId',$userId);
 
