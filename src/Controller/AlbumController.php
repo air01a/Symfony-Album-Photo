@@ -88,6 +88,11 @@ class AlbumController extends AbstractFOSRestController
     public function listAction(ParamFetcherInterface $paramFetcher){
         $user = $this->getUser();
 
+
+        if ($paramFetcher->get('admin')) {
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+                throw $this->createAccessDeniedException('Need to be admin');
+        }
         $pager = $this->getDoctrine()->getRepository('App:Album')->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),

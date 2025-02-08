@@ -69,13 +69,26 @@ class PhotoController extends AbstractFOSRestController
         $this->denyAccessUnlessGranted('edit', $album);
 
         $uploadedFile = $request->files;
+
+        $logger->info('Objet reçu : ' . json_encode($request));
+
+        $logger->error("Uploading photo  to album ");
+
         if ($uploadedFile==null){
             return false;
         }
+
+        $logger->info('Objet reçu : ' . json_encode($uploadedFile));
+
+
+        $logger->error("Uploading photo  to album 2");
+
         $em = $this->getDoctrine()->getManager();
 
-
+        $logger->error("Uploading photo  to album 3");
         $error=$photoHelper->storeImage($album, $photo, $uploadedFile->get('file'));
+        $logger->error("out");
+
         if ($error>=0){
             $exif=$photoHelper->getExif($album,$photo);
             if ($exif) {
