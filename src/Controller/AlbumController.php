@@ -171,7 +171,7 @@ class AlbumController extends AbstractFOSRestController
         //    'Content-Disposition' => 'inline; filename="photos'.strval($album->getId()).'.zip"');
         //return new Response($zip, 200, $headers);
         $response = new BinaryFileResponse($zip);
-        $response->headers->set('Content-Type','application.zip');
+        $response->headers->set('Content-Type','application/zip');
         $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', $album->getName().'.zip'));
         return $response;
     }
