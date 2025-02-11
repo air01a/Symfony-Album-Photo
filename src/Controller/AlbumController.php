@@ -242,7 +242,7 @@ class AlbumController extends AbstractFOSRestController
         $em = $this->getDoctrine()->getManager();
         $this->getDoctrine()->getManager()->flush();
         $data = json_decode($request->getContent());
-        if ($data->sorter != $album->getSorter())   
+        if (isset($data->sorter) && $data->sorter != $album->getSorter())   
             $this->getDoctrine()->getRepository('App:Photos')->resetOrder($album->getId());
 
         $em->persist($album->setParameters($data));
