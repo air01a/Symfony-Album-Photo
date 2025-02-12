@@ -159,6 +159,30 @@ class PhotoController extends AbstractFOSRestController
         return $Photos;
 
     }
+
+
+        
+    /**
+     * @Rest\Post("/publicapi/albums/{id}/photos", name="app_public_album_photo_list",requirements = {"id"="\d+"})
+     *     
+     * @Rest\View
+     */
+    public function getPhotosPublic(Album $album, Request $request, FileHelper $fileHelper)
+    {
+        $data = json_decode($request->getContent(), true);
+        $token = $data['token'] ?? null;
+
+        if (!$album->getPublic() || !$token || $album->getIdPub()!=$token) {
+            throw $this->createNotFoundException('Album non trouvé');
+
+
+        }
+        //return ($album->getIdPub());
+        //if ($album->getIdPub)
+        $Photos = $this->getDoctrine()->getRepository('App:Photos')->search($album->getId(),$album->getSorter());
+        return $Photos;
+    }
+
   
     /**
      * @Rest\Get("/api/v1/albums/{id}/photos/{idPhoto}", name="app_photos_get")
@@ -179,13 +203,16 @@ class PhotoController extends AbstractFOSRestController
     }
 
 
+    
+
     /**
      * downloadAction but without query parameters to be called internally
      */
 
-    public function downloadActionHelper(Album $album, ?Photos $photo,ParamFetcherInterface $paramFetcher,PhotoHelper $photoHelper)
+    public function downloadActionHelper(Album $album, ?Photos $photo,ParamFetcherInterface $paramFetcher,PhotoHelper $photoHelper, $public=false)
     {
-        $this->denyAccessUnlessGranted('view', $album);
+        if (!$public)
+            $this->denyAccessUnlessGranted('view', $album);
 
 
         if ($photo==null)
@@ -234,6 +261,44 @@ class PhotoController extends AbstractFOSRestController
     {
         return $this->downloadActionHelper($album,$photo,$paramFetcher,$photoHelper);
     }
+
+
+    /**
+     * @Rest\Post("/publicapi/albums/{id}/photos/{idPhoto}/download", name="app_photos_download_public")
+     * requirements = {"id"="\d+", "idPhoto"="\d+"}
+     * @Rest\View
+     * @ParamConverter("photo", options={"id" = "idPhoto"})
+     * @Rest\QueryParam(
+     *     name="thumb",
+     *     requirements="\d",
+     *     nullable=true,
+     *     default="1",
+     *     description="0 to full size, 1 for thumbnail"
+     * )
+     * @Rest\QueryParam(
+     *     name="size",
+     *     requirements="[0-9]*x[0-9]*",
+     *     nullable=true,
+     *     default="1200x700",
+     *     description="size of image"
+     * )
+
+     */
+    public function downloadActionPublic(Album $album, Photos $photo, Request $request,ParamFetcherInterface $paramFetcher,PhotoHelper $photoHelper)
+    {
+        $data = json_decode($request->getContent(), true);
+        $token = $data['token'] ?? null;
+
+        if (!$album->getPublic() || !$token || $album->getIdPub()!=$token) {
+            throw $this->createNotFoundException('Album non trouvé');
+
+
+        }
+        return $this->downloadActionHelper($album,$photo,$paramFetcher,$photoHelper, true);
+    }
+
+
+    
 
          /**
      * @Rest\Get("/downloadbyhash/{id}/photos/{idPhoto}", name="app_photos_downloadbyhash")

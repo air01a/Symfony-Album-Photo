@@ -60,5 +60,6 @@ security:
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #        - { path: ^/api/v1/albumpublic*, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/albumpublic*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/publicapi*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/registration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/.*, roles: IS_AUTHENTICATED_FULLY }

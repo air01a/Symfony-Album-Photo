@@ -85,7 +85,7 @@ class AlbumController extends AbstractFOSRestController
      *     description="do not check for right"
      * ) 
      */
-    public function listAction(ParamFetcherInterface $paramFetcher){
+    public function listAction(ParamFetcherInterface $paramFetcher,LoggerInterface $logger){
         $user = $this->getUser();
 
 
@@ -93,24 +93,26 @@ class AlbumController extends AbstractFOSRestController
             if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
                 throw $this->createAccessDeniedException('Need to be admin');
         }
+
+        
         $pager = $this->getDoctrine()->getRepository('App:Album')->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('page'),
             $user->getId(),
-            $paramFetcher->get('admin')
+            $paramFetcher->get('admin'),
         );
 
         $albums = new Albums($pager);
         return $albums;
 
     }
-    
+
+
+
     /**
-     * @Rest\Get("/api/v1/albums/{id}", name="app_album_list")
-     *     name = "app_album_get",
-     *     requirements = {"id"="\d+"}
+     * @Rest\Get("/api/v1/albums/{id}", name="app_album_list", requirements = {"id"="\d+"})
      * @Rest\View
      */
     public function getAction(Album $album,FileHelper $fileHelper)
@@ -119,6 +121,30 @@ class AlbumController extends AbstractFOSRestController
         return $album;
     }
 
+
+    
+    /**
+     * @Rest\Post("/publicapi/albums/{id}", name="app_public_album_list",requirements = {"id"="\d+"})
+     *     
+     * @Rest\View
+     */
+    public function getActionPublic(Album $album, Request $request, FileHelper $fileHelper)
+    {
+        //$this->denyAccessUnlessGranted('view', $album);
+        $data = json_decode($request->getContent(), true);
+        $token = $data['token'] ?? null;
+
+        if (!$album->getPublic() || !$token || $album->getIdPub()!=$token) {
+            throw $this->createNotFoundException('Album non trouvé');
+
+
+        }
+        //return ($album->getIdPub());
+        //if ($album->getIdPub)
+        return $album;
+    }
+
+    
     /**
      * @Rest\Delete("/api/v1/albums/{id}", name="app_album_delete")
      *     name = "app_album_delete",
