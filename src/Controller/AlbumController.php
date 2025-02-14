@@ -40,6 +40,7 @@ class AlbumController extends AbstractFOSRestController
         $right->setAlbum($album);
 
         $album->setPath($fileHelper->getRandomDirectory());
+        $album->setIdPub(bin2hex(random_bytes(16)));
         $error=$fileHelper->prepareDirectory($album->getPath());
         if ($error==0) {
             $em->persist($album);
@@ -85,7 +86,7 @@ class AlbumController extends AbstractFOSRestController
      *     description="do not check for right"
      * ) 
      */
-    public function listAction(ParamFetcherInterface $paramFetcher,LoggerInterface $logger){
+    public function listAction(ParamFetcherInterface $paramFetcher){
         $user = $this->getUser();
 
 
@@ -121,6 +122,20 @@ class AlbumController extends AbstractFOSRestController
         return $album;
     }
 
+
+    /**
+     * @Rest\Get("/api/v1/albums/count", name="app_album_count")
+     * @Rest\View
+     */
+    public function getCount()
+    {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+            throw $this->createAccessDeniedException('GET OUT!');
+        $countTotal = $this->getDoctrine()->getRepository('App:Album')->getAlbumCount();
+        $countPublic = $this->getDoctrine()->getRepository('App:Album')->getPublicAlbumCount();
+        $countCountry = $this->getDoctrine()->getRepository('App:Album')->getCountryAlbumCount();
+        return ['total'=>intval($countTotal),'public'=>intval($countPublic), 'country'=>intval($countCountry)];
+    }
 
     
     /**
@@ -248,6 +263,8 @@ class AlbumController extends AbstractFOSRestController
         $album->setVideo($newAlbum->getVideo());
         $album->setPublic($newAlbum->getPublic());
         $album->setIdPub($newAlbum->getIdPub());
+
+
         $this->getDoctrine()->getManager()->flush();
         return $album;
     }

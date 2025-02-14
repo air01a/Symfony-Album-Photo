@@ -58,6 +58,22 @@ class PhotoController extends AbstractFOSRestController
         $em->flush();
     }
 
+
+    
+    /**
+     * @Rest\Get("/api/v1/photos/count", name="app_photos_count")
+     * @Rest\View
+     */
+    public function getCount()
+    {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+            throw $this->createAccessDeniedException('GET OUT!');
+        $count = $this->getDoctrine()->getRepository('App:Photos')->getAlbumCount();
+
+        return ["photos"=>$count];
+    }
+
+
     /**
      * @Rest\Post("/api/v1/albums/{id}/photos/{idPhoto}")
      * requirements = {"id"="\d+", "idPhoto"="\d+"}

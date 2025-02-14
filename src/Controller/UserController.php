@@ -30,6 +30,22 @@ class UserController extends AbstractFOSRestController
 
     }
 
+
+    /**
+     * @Rest\Get("/api/v1/users/count")
+     * @Rest\View
+     * 
+     */
+    public function getCount() {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+            throw $this->createAccessDeniedException('GET OUT!');
+        $users = $this->getDoctrine()->getRepository('App:User')->findAll();  
+   
+        
+        return ["users"=>sizeof($users)];  
+
+    }
+
     /**
      * @Rest\Get("/api/v1/users/{id}")
      * requirements = {"id"="\d+"}

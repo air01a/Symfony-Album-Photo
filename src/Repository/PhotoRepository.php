@@ -132,4 +132,15 @@ class PhotoRepository extends EntityRepository
         
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function getAlbumCount()
+    {
+
+
+        return $this->_em->createQueryBuilder('p')
+                        ->select('COUNT(p.id)')
+                        ->from('App:Photos', 'p')
+                        ->getQuery()
+                        ->getSingleScalarResult();
+    }
 }

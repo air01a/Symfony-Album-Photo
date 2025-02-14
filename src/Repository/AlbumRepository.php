@@ -12,12 +12,15 @@ class AlbumRepository extends AbstractRepository
                          ->select('a')
                          ->from('App:Album', 'a')
                          ->join('a.rights','r');
+                         
         if (!$admin) {
             $qb
+                         
                          ->where('r.user = ?1')
                          ->setParameter(1,$userId)
                         ;
-        }
+        } 
+
 
         if ($term) {
             $qb
@@ -65,5 +68,37 @@ class AlbumRepository extends AbstractRepository
 
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getAlbumCount()
+    {
+
+
+        return $this->_em->createQueryBuilder('a')
+                        ->select('COUNT(a.id)')
+                        ->from('App:Album', 'a')
+                        ->getQuery()
+                        ->getSingleScalarResult();
+    }
+
+    public function getPublicAlbumCount()
+    {
+
+
+        return $this->_em->createQueryBuilder('a')
+                        ->select('COUNT(a.id)')
+                        ->from('App:Album', 'a')
+                        ->where('a.public=1')
+                        ->getQuery()
+                        ->getSingleScalarResult();
+    }
+
+    public function getCountryAlbumCount()
+    {
+        return $this->_em->createQueryBuilder('a')
+                        ->select('COUNT(DISTINCT(a.country))')
+                        ->from('App:Album', 'a')
+                        ->getQuery()
+                        ->getSingleScalarResult();
     }
 }
